@@ -45,7 +45,7 @@ public class HYTStreams extends LStatusHandler {
         String id = result.getId().getVideoId();
         committed.add(id);
         channel.sendMessage(Messages.Streams.newStream(result)).queue(null, throwable -> {
-            Messages.trySendError("Cannot commit a new stream notation", Messages.describeException(throwable));
+            Messages.tryPrintError("Cannot commit a new stream notation", Messages.describeException(throwable));
             committed.remove(id);
         });
     }

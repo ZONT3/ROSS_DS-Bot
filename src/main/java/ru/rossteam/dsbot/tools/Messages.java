@@ -21,8 +21,24 @@ public class Messages {
         channel.sendMessage(error(title, description)).queue();
     }
 
-    public static void trySendError(String title, String description) {
-        // TODO
+    public static void tryPrintError(String title, String description) {
+        TextChannel channel = null;
+        try {
+            channel = Commons.tryFindTChannel(Configs.getLogChannelID(), Globals.jda);
+        } catch (Exception ignored) { };
+        if (channel == null) {
+            for (Guild guild: Globals.jda.getGuilds()) {
+                channel = guild.getSystemChannel();
+                if (channel != null) break;
+            }
+            if (channel == null) {
+                for (Guild guild: Globals.jda.getGuilds()) {
+                    channel = guild.getDefaultChannel();
+                    if (channel != null) break;
+                }
+            }
+        }
+        if (channel != null) printError(channel, title, description);
     }
 
     public static MessageEmbed addTimestamp(MessageEmbed e) {
@@ -47,8 +63,12 @@ public class Messages {
     }
 
     public static String describeException(Throwable e) {
+        return describeException(null, e);
+    }
+
+    public static String describeException(Class<?> klass, Throwable e) {
         String localizedMessage = e.getLocalizedMessage();
-        return e.getClass().getSimpleName() + (localizedMessage == null ? "" : ": " + localizedMessage);
+        return (klass != null ? (klass.getSimpleName() + ": ") : "") + e.getClass().getSimpleName() + (localizedMessage == null ? "" : ": " + localizedMessage);
     }
 
     public static void addOK(Message msg) {

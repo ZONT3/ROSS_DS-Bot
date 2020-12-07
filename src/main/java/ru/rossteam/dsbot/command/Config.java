@@ -28,11 +28,11 @@ public class Config extends CommandAdapter {
     public void onRequest(@NotNull MessageReceivedEvent event) throws UserInvalidArgumentException {
         String[] args = Commands.parseArgs(this, event);
         if (args.length == 0)
-            throw new UserInvalidArgumentException(STR.getString("err.incorrect_args"));
+            throw new UserInvalidArgumentException(STR.getString("err.insufficient_args"));
         switch (args[0].toLowerCase()) {
             case "set":
                 if (args.length < 4)
-                    throw new UserInvalidArgumentException(STR.getString("err.incorrect_args"));
+                    throw new UserInvalidArgumentException(STR.getString("err.insufficient_args"));
                 if (args.length > 4)
                     for (int i = 4; i < args.length; i++)
                         args[3] += (" " + args[i]);

@@ -14,6 +14,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import ru.rossteam.dsbot.listeners.HClientsTS;
+import ru.rossteam.dsbot.listeners.streams.HYTStreams;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.rossteam.dsbot.command.CommandAdapter;
 import ru.rossteam.dsbot.tools.Configs;
@@ -36,9 +37,10 @@ public class Main extends ListenerAdapter {
 
         handleArguments(args);
 
-        JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MEMBERS)
+        Globals.jda = JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(
                         new Main(),
+                        Globals.ytStreams = new HYTStreams(),
                         Globals.usersMonitoring = new HClientsTS()
                 )
                 .setMemberCachePolicy(MemberCachePolicy.ALL)

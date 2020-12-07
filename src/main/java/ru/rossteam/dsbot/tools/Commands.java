@@ -176,6 +176,12 @@ public class Commands {
             return new Iter();
         }
 
+        public String getArg(int i) {
+            ArrayList<String> args = getArgs();
+            if (i >= args.size()) return null;
+            return args.get(i);
+        }
+
         private class Iter implements Iterator<String> {
             private int pointer = 0;
 
