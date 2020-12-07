@@ -6,6 +6,8 @@ import ru.rossteam.dsbot.listeners.LStatusHandler;
 public class Globals {
     public static final String version = "1.0-SNAPSHOT";
 
+    public static String GOOGLE_API;
+
     public static CommandAdapter[] commandAdapters = null;
 
     public static String ZONT_MENTION = "<@331524458806247426>";

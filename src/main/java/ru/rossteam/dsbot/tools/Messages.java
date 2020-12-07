@@ -1,5 +1,6 @@
 package ru.rossteam.dsbot.tools;
 
+import com.google.api.services.youtube.model.SearchResult;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 
@@ -18,6 +19,10 @@ public class Messages {
 
     public static void printError(MessageChannel channel, String title, String description) {
         channel.sendMessage(error(title, description)).queue();
+    }
+
+    public static void trySendError(String title, String description) {
+        // TODO
     }
 
     public static MessageEmbed addTimestamp(MessageEmbed e) {
@@ -41,12 +46,20 @@ public class Messages {
         sendSplit(channel, builders, false);
     }
 
-    public static String describeException(Exception e) {
+    public static String describeException(Throwable e) {
         String localizedMessage = e.getLocalizedMessage();
         return e.getClass().getSimpleName() + (localizedMessage == null ? "" : ": " + localizedMessage);
     }
 
     public static void addOK(Message msg) {
         msg.addReaction("\u2705").queue();
+    }
+
+    public static class Streams {
+        public static MessageEmbed newStream(SearchResult result) {
+            return new EmbedBuilder()
+
+                    .build();
+        }
     }
 }

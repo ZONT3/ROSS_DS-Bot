@@ -4,11 +4,11 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.rossteam.dsbot.tools.Commons;
 import ru.rossteam.dsbot.tools.Configs;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.rossteam.dsbot.tools.Strings;
@@ -41,13 +41,7 @@ public class HClientsTS extends LStatusHandler {
 
     @Override
     public void update() {
-        String channelID = Configs.getTSCountChannelID();
-        GuildChannel channel = null;
-        for (Guild guild: getJda().getGuilds()) {
-            channel = guild.getGuildChannelById(channelID);
-            if (channel != null) break;
-        }
-        if (channel == null) throw new NullPointerException("Cannot find channel");
+        GuildChannel channel = tryFindChannel(Configs.getTSCountChannelID());
 
         int count = getClientCount();
         if (count == lastCount) return;

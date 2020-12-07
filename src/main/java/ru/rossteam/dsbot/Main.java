@@ -47,13 +47,15 @@ public class Main extends ListenerAdapter {
     }
 
     private static void handleArguments(String[] args) throws LoginException, IllegalArgumentException {
-        if (args.length < 2) throw new LoginException("Too few arguments");
+        if (args.length < 3) throw new LoginException("Too few arguments");
 
-        String[] tsqArgs = args[1].split(":");
+        String[] tsqArgs = args[1].split(";");
         if (tsqArgs.length < 3) throw new IllegalArgumentException("Too few TS Query arguments");
         Globals.tsq_host  = tsqArgs[0];
         Globals.tsq_login = tsqArgs[1];
         Globals.tsq_pass  = tsqArgs[2];
+
+        Globals.GOOGLE_API = args[2];
     }
 
     @Override

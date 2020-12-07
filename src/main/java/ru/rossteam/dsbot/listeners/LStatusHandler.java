@@ -1,14 +1,11 @@
 package ru.rossteam.dsbot.listeners;
 
 import net.dv8tion.jda.api.JDA;
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.entities.VoiceChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleAddEvent;
-import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import ru.rossteam.dsbot.tools.LOG;
+import org.jetbrains.annotations.NotNull;
+import ru.rossteam.dsbot.tools.Commons;
 
 import javax.annotation.Nonnull;
 
@@ -32,6 +29,16 @@ public abstract class LStatusHandler extends ListenerAdapter {
     public JDA getJda() { return jda; }
 
     public CallerThread getCallerThread() { return callerThread; }
+
+    @NotNull
+    public GuildChannel tryFindChannel(String channelID) throws NullPointerException {
+        return Commons.tryFindChannel(channelID, getJda());
+    }
+
+    @NotNull
+    public MessageChannel tryFindTChannel(String channelID) throws NullPointerException {
+        return Commons.tryFindTChannel(channelID, getJda());
+    }
 
     @SuppressWarnings("BusyWait")
     private class CallerThread extends Thread {

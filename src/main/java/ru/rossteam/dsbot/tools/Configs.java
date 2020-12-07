@@ -25,6 +25,22 @@ public class Configs {
         return id;
     }
 
+    public static String getStreamsChannelID() {
+        String id = getGlobalProps().getProperty("channel_streams");
+        checkIDStatement(id);
+        return id;
+    }
+
+    public static Properties getGlobalPropsDefaults() {
+        return new Properties(){{
+            setProperty("command_prefix", "r.");
+            setProperty("channel_ts_online", "0");
+            setProperty("channel_log", "0");
+            setProperty("channel_streams", "0");
+            setProperty("TA_IDS", "331524458806247426");
+        }};
+    }
+
     private static void checkIDStatement(String id) {
         if (id.equals("0")) throw new IllegalStateException("ID not stated!");
     }
@@ -45,15 +61,6 @@ public class Configs {
         gPropertiesCache = res;
         gPropertiesCacheTS = current;
         return res;
-    }
-
-    public static Properties getGlobalPropsDefaults() {
-        return new Properties(){{
-            setProperty("command_prefix", "r.");
-            setProperty("channel_ts_online", "0");
-            setProperty("channel_log", "0");
-            setProperty("TA_IDS", "331524458806247426");
-        }};
     }
 
     public static Properties getProps(String name, Properties defaultProps) {
