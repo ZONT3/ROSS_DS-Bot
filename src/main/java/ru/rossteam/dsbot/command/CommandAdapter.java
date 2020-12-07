@@ -1,18 +1,18 @@
-package ru.zont.rgdsb.command;
+package ru.rossteam.dsbot.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.zont.rgdsb.NotImplementedException;
-import ru.zont.rgdsb.tools.Configs;
-import ru.zont.rgdsb.tools.Globals;
-import ru.zont.rgdsb.tools.LOG;
-import ru.zont.rgdsb.tools.Messages;
+import ru.rossteam.dsbot.NotImplementedException;
+import ru.rossteam.dsbot.tools.Configs;
+import ru.rossteam.dsbot.tools.Globals;
+import ru.rossteam.dsbot.tools.LOG;
+import ru.rossteam.dsbot.tools.Messages;
 
 import java.io.File;
 import java.util.Properties;
 
-import static ru.zont.rgdsb.tools.Strings.STR;
+import static ru.rossteam.dsbot.tools.Strings.STR;
 
 public abstract class CommandAdapter {
     private Properties propertiesCache = null;

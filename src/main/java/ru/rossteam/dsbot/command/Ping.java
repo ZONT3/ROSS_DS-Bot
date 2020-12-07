@@ -1,4 +1,4 @@
-package ru.zont.rgdsb.command;
+package ru.rossteam.dsbot.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Properties;
 
-import static ru.zont.rgdsb.tools.Strings.STR;
+import static ru.rossteam.dsbot.tools.Strings.STR;
 
 public class Ping extends CommandAdapter {
     public Ping() throws RegisterException {

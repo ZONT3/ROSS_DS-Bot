@@ -1,9 +1,9 @@
-package ru.zont.rgdsb.tools;
+package ru.rossteam.dsbot.tools;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.zont.rgdsb.command.CommandAdapter;
-import ru.zont.rgdsb.command.ExternalCallable;
+import ru.rossteam.dsbot.command.CommandAdapter;
+import ru.rossteam.dsbot.command.ExternalCallable;
 
 import java.util.*;
 

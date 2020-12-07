@@ -1,18 +1,11 @@
-package ru.zont.rgdsb.tools;
+package ru.rossteam.dsbot.tools;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 
 import java.awt.*;
-import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-
-import static ru.zont.rgdsb.tools.Strings.STR;
 
 public class Messages {
     public static MessageEmbed error(String title, String description) {

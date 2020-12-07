@@ -1,4 +1,4 @@
-package ru.zont.rgdsb;
+package ru.rossteam.dsbot;
 
 public class NotImplementedException extends RuntimeException {
     public NotImplementedException() { }

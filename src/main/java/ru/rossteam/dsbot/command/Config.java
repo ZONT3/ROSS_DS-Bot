@@ -1,4 +1,4 @@
-package ru.zont.rgdsb.command;
+package ru.rossteam.dsbot.command;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
@@ -6,10 +6,10 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.zont.rgdsb.tools.Commands;
-import ru.zont.rgdsb.tools.Configs;
-import ru.zont.rgdsb.tools.LOG;
-import ru.zont.rgdsb.tools.Messages;
+import ru.rossteam.dsbot.tools.LOG;
+import ru.rossteam.dsbot.tools.Commands;
+import ru.rossteam.dsbot.tools.Configs;
+import ru.rossteam.dsbot.tools.Messages;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static ru.zont.rgdsb.tools.Strings.STR;
+import static ru.rossteam.dsbot.tools.Strings.STR;
 
 public class Config extends CommandAdapter {
     public Config() throws RegisterException {

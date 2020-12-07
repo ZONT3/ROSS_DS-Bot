@@ -1,6 +1,6 @@
-package ru.zont.rgdsb.tools;
+package ru.rossteam.dsbot.tools;
 
-import ru.zont.rgdsb.UTF8Control;
+import ru.rossteam.dsbot.UTF8Control;
 
 import java.util.ResourceBundle;
 

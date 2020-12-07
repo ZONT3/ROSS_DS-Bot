@@ -1,4 +1,4 @@
-package ru.zont.rgdsb.tools;
+package ru.rossteam.dsbot.tools;
 
 import java.io.BufferedWriter;
 import java.io.File;

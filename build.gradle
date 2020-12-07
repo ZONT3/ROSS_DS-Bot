@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-group 'ru.zont'
+group 'ru.rossteam'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -18,6 +18,8 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.reflections:reflections:0.9.12'
     implementation 'net.usrlib:material-color:0.1'
+    compile group: 'com.github.theholywaffle', name: 'teamspeak3-api', version: '1.2.0'
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
 }
 
 test {

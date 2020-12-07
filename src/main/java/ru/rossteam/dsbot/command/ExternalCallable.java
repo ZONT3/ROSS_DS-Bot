@@ -1,6 +1,6 @@
-package ru.zont.rgdsb.command;
+package ru.rossteam.dsbot.command;
 
-import ru.zont.rgdsb.tools.Commands;
+import ru.rossteam.dsbot.tools.Commands;
 
 public interface ExternalCallable {
     void call(Commands.Input input);

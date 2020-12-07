@@ -1,4 +1,4 @@
-package ru.zont.rgdsb;
+package ru.rossteam.dsbot;
 
 import java.io.IOException;
 import java.io.InputStream;

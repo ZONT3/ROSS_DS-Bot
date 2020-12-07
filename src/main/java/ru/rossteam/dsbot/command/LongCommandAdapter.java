@@ -1,4 +1,4 @@
-package ru.zont.rgdsb.command;
+package ru.rossteam.dsbot.command;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;

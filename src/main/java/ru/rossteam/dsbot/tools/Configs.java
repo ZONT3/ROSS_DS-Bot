@@ -1,4 +1,4 @@
-package ru.zont.rgdsb.tools;
+package ru.rossteam.dsbot.tools;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,39 +13,20 @@ public class Configs {
     private static Properties gPropertiesCache = null;
     private static long gPropertiesCacheTS = 0;
 
-    public static String getRoleGmID() {
-        String res = getGlobalProps().getProperty("ROLE_GM");
-        if (res.equals("0"))
-            throw new IdNotProvidedException();
-        return res;
+    public static String getTSCountChannelID() {
+        String id = getGlobalProps().getProperty("channel_ts_online");
+        checkIDStatement(id);
+        return id;
     }
 
-    public static String getChannelStatusID() {
-        String res = getGlobalProps().getProperty("CHANNEL_STATUS");
-        if (res.equals("0"))
-            throw new IdNotProvidedException();
-        return res;
+    public static String getLogChannelID() {
+        String id = getGlobalProps().getProperty("channel_log");
+        checkIDStatement(id);
+        return id;
     }
 
-    public static String getRoleGmmID() {
-        String res = getGlobalProps().getProperty("ROLE_GMM");
-        if (res.equals("0"))
-            throw new IdNotProvidedException();
-        return res;
-    }
-
-    public static String getRolePlayerID() {
-        String res = getGlobalProps().getProperty("ROLE_PLAYER");
-        if (res.equals("0"))
-            throw new IdNotProvidedException();
-        return res;
-    }
-
-    public static String getChannelPlayersID() {
-        String res = getGlobalProps().getProperty("CHANNEL_PLAYERS");
-        if (res.equals("0"))
-            throw new IdNotProvidedException();
-        return res;
+    private static void checkIDStatement(String id) {
+        if (id.equals("0")) throw new IllegalStateException("ID not stated!");
     }
 
     public static void storeGlobalProps(Properties properties) {
@@ -68,7 +49,9 @@ public class Configs {
 
     public static Properties getGlobalPropsDefaults() {
         return new Properties(){{
-            setProperty("command_prefix", "t.");
+            setProperty("command_prefix", "r.");
+            setProperty("channel_ts_online", "0");
+            setProperty("channel_log", "0");
             setProperty("TA_IDS", "331524458806247426");
         }};
     }
