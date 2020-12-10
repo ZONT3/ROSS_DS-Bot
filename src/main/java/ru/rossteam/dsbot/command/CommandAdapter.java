@@ -3,6 +3,7 @@ package ru.rossteam.dsbot.command;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.rossteam.dsbot.DescribedException;
 import ru.rossteam.dsbot.NotImplementedException;
 import ru.rossteam.dsbot.tools.Configs;
 import ru.rossteam.dsbot.tools.Globals;
@@ -115,6 +116,9 @@ public abstract class CommandAdapter {
                     .setDescription(STR.getString("err.not_implemented"))
                     .setColor(0xc2185b)
                     .build()).queue();
+        } catch (DescribedException e) {
+            e.printStackTrace();
+            Messages.printError(event.getChannel(), e.getTitle(), e.getDescription());
         }
     }
 

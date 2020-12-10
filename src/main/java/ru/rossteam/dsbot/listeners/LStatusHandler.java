@@ -6,11 +6,8 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Commons;
-import ru.rossteam.dsbot.tools.Messages;
 
 import javax.annotation.Nonnull;
-
-import static ru.rossteam.dsbot.tools.Strings.STR;
 
 
 public abstract class LStatusHandler extends ListenerAdapter {
@@ -27,9 +24,7 @@ public abstract class LStatusHandler extends ListenerAdapter {
         try {
             prepare(event);
         } catch (Throwable e) {
-            e.printStackTrace();
-            Messages.tryPrintError(STR.getString("err.unexpected"),
-                    Messages.describeException(getClass(), e));
+            Commons.reportError(e, getClass());
         }
         callerThread = new CallerThread();
         callerThread.start();
@@ -61,9 +56,7 @@ public abstract class LStatusHandler extends ListenerAdapter {
             while (!interrupted()) {
                 try { update(); }
                 catch (Exception e) {
-                    e.printStackTrace();
-                    Messages.tryPrintError(STR.getString("err.unexpected"),
-                            Messages.describeException(getClass(), e));
+                    Commons.reportError(e, getClass());
                 }
                 try { sleep(getPeriod()); }
                 catch (InterruptedException e) {

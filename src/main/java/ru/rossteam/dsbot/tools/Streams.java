@@ -167,7 +167,7 @@ public class Streams {
 
     public static void removeFromWatchingList(String res) {
         HashSet<String> set = retrieveWatchingList();
-        set.removeIf(s -> s.replaceFirst("\\w+:", "").equals(res));
+        set.removeIf(s -> s.equalsIgnoreCase(res));
         commitWL(set);
     }
 

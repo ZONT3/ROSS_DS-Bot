@@ -42,7 +42,10 @@ public class Messages {
                 }
             }
         }
-        if (channel != null) printError(channel, title, description);
+        if (channel != null) channel.sendMessage(
+                new EmbedBuilder(error(title, description))
+                        .setFooter(Strings.STR.getString("err.unexpected.foot"))
+                        .build()).queue();
     }
 
     public static MessageEmbed addTimestamp(MessageEmbed e) {

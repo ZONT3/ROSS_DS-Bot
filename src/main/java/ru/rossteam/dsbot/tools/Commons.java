@@ -7,6 +7,8 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
+import static ru.rossteam.dsbot.tools.Strings.STR;
+
 public class Commons {
 
     @NotNull
@@ -29,5 +31,10 @@ public class Commons {
         }
         if (channel == null) throw new NullPointerException("Cannot find channel");
         return channel;
+    }
+
+    public static void reportError(Throwable e, Class<?> klass) {
+        e.printStackTrace();
+        Messages.tryPrintError(STR.getString("err.unexpected"), Messages.describeException(klass, e));
     }
 }

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.rossteam.dsbot.DescribedException;
 import ru.rossteam.dsbot.tools.Commands;
 import ru.rossteam.dsbot.tools.Messages;
 
@@ -59,17 +60,14 @@ public class Streams extends CommandAdapter {
 
     private void removeWatch(@NotNull MessageReceivedEvent event, Commands.Input input) {
         String res = getValidReference(event, input);
-        if (res == null) return;
         removeFromWatchingList(res);
     }
 
     private void addWatch(@NotNull MessageReceivedEvent event, Commands.Input input) {
         String res = getValidReference(event, input);
-        if (res == null) return;
         addToWatchingList(res);
     }
 
-    @Nullable
     private String getValidReference(@NotNull MessageReceivedEvent event, Commands.Input input) {
         ArrayList<String> args = input.getArgs();
         if (args.size() < 2) throw new UserInvalidArgumentException(STR.getString("err.insufficient_args"));
@@ -86,11 +84,10 @@ public class Streams extends CommandAdapter {
             } catch (Throwable ee) {
                 e.printStackTrace();
                 ee.printStackTrace();
-                Messages.printError(event.getChannel(),
-                        STR.getString("err.general"),
+                throw new DescribedException(
+                        STR.getString("comm.streams.err.add.title"),
                         String.format(STR.getString("comm.streams.err.add"),
                                 Messages.describeException(e)));
-                return null;
             }
         }
         return service + channel;
