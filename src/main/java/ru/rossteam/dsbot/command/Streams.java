@@ -47,19 +47,25 @@ public class Streams extends CommandAdapter {
     private void addWatch(@NotNull MessageReceivedEvent event, Commands.Input input) {
         ArrayList<String> args = input.getArgs();
         if (args.size() < 2) throw new UserInvalidArgumentException(STR.getString("err.insufficient_args"));
-        String channelID;
+        String channel; String service = "yt:";
         try {
-            channelID = getChannelID(args.get(1));
-        } catch (IOException e) {
-            e.printStackTrace();
-            Messages.printError(event.getChannel(),
-                    STR.getString("err.general"),
-                    String.format(STR.getString("comm.streams.err.add"),
-                            Messages.describeException(e)));
-            return;
+            channel = getYTChannelID(args.get(1));
+        } catch (Exception e) {
+            try {
+                service = "ttv:";
+                channel = getTwitchChannel(args.get(1));
+            } catch (Throwable ee) {
+                e.printStackTrace();
+                ee.printStackTrace();
+                Messages.printError(event.getChannel(),
+                        STR.getString("err.general"),
+                        String.format(STR.getString("comm.streams.err.add"),
+                                Messages.describeException(e)));
+                return;
+            }
         }
 
-        addToWatchingList(getChannelLink(channelID));
+        addToWatchingList(service + channel);
     }
 
     @Override

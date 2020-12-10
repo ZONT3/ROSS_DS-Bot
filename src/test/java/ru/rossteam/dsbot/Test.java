@@ -1,29 +1,28 @@
 package ru.rossteam.dsbot;
 
-import com.google.api.services.youtube.YouTube;
-import com.google.api.services.youtube.model.SearchResult;
+import com.github.twitch4j.helix.domain.Stream;
+import com.github.twitch4j.helix.domain.StreamList;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.rossteam.dsbot.tools.Streams;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+
+import static ru.rossteam.dsbot.tools.Streams.*;
 
 public class Test {
 
     public static void main(String[] args) throws GeneralSecurityException, IOException {
         Globals.GOOGLE_API = args[0];
+        Globals.TWITCH_API_SECRET = args[1];
 
-        Streams.setupYouTube();
-        YouTube.Search.List search = Streams.api.search().list("snippet");
-        final List<SearchResult> items = search.setKey(Globals.GOOGLE_API)
-                .setChannelId("UCys2ksPVgr2t3eUDGX4h8ow")
-                .setType("video")
-                .execute().getItems();
+        setupTwitch();
+        final List<Stream> streams = helix.getStreams(null, null, null, null, null, null, null, Collections.singletonList("elwycco")).execute().getStreams();
 
-        System.out.println(items);
-
-
+        System.out.println(streams);
 //        Streams.getYouTube();
 //        Scanner s = new Scanner(System.in);
 //        String line;

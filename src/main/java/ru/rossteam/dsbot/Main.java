@@ -14,7 +14,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import ru.rossteam.dsbot.listeners.HClientsTS;
-import ru.rossteam.dsbot.listeners.streams.HYTStreams;
+import ru.rossteam.dsbot.listeners.streams.HStreams;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.rossteam.dsbot.command.CommandAdapter;
 import ru.rossteam.dsbot.tools.Configs;
@@ -40,7 +40,7 @@ public class Main extends ListenerAdapter {
         Globals.jda = JDABuilder.createLight(args[0], GatewayIntent.GUILD_MESSAGES, GatewayIntent.DIRECT_MESSAGES, GatewayIntent.GUILD_MEMBERS)
                 .addEventListeners(
                         new Main(),
-                        Globals.ytStreams = new HYTStreams(),
+                        Globals.ytStreams = new HStreams(),
                         Globals.usersMonitoring = new HClientsTS()
                 )
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -50,7 +50,7 @@ public class Main extends ListenerAdapter {
     }
 
     private static void handleArguments(String[] args) throws LoginException, IllegalArgumentException {
-        if (args.length < 3) throw new LoginException("Too few arguments");
+        if (args.length < 4) throw new LoginException("Too few arguments");
 
         String[] tsqArgs = args[1].split(";");
         if (tsqArgs.length < 3) throw new IllegalArgumentException("Too few TS Query arguments");
@@ -59,6 +59,7 @@ public class Main extends ListenerAdapter {
         Globals.tsq_pass  = tsqArgs[2];
 
         Globals.GOOGLE_API = args[2];
+        Globals.TWITCH_API_SECRET = args[3];
     }
 
     @Override

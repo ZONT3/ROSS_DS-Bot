@@ -1,5 +1,6 @@
 package ru.rossteam.dsbot.tools;
 
+import com.github.twitch4j.helix.domain.Stream;
 import com.google.api.services.youtube.model.SearchResult;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
@@ -79,7 +80,7 @@ public class Messages {
     }
 
     public static class Streams {
-        public static MessageEmbed newStream(SearchResult result) {
+        public static MessageEmbed newYTStream(SearchResult result) {
             if (!result.getId().getKind().equals("youtube#video")) throw new IllegalArgumentException("Result isn't video");
 
             try {
@@ -88,9 +89,9 @@ public class Messages {
                 final String description = trimSnippet(result.getSnippet().getDescription(), 64);
                 final String thumb = result.getSnippet().getThumbnails().getDefault().getUrl();
                 final String ytLink = getYTLink(result.getId().getVideoId());
-                final String channelLink = getChannelLink(result.getSnippet().getChannelId());
+                final String channelLink = getYTChannelLink(result.getSnippet().getChannelId());
 //                final String ytThumbnail = getYTThumbnail(channelLink);
-
+                // TODO Здесь и ниже - фамнейл канала
                 return new EmbedBuilder()
                         .setAuthor(channelTitle, channelLink)
                         .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
@@ -101,6 +102,26 @@ public class Messages {
                         .setColor(0xFF0000)
                         .build();
 
+            } catch (Throwable e) {
+                throw new RuntimeException("Error in getting info", e);
+            }
+        }
+
+        public static MessageEmbed newTTVStream(Stream stream) {
+
+            try {
+                final String title = stream.getTitle();
+                final String user = stream.getUserName();
+                final String thumb = stream.getThumbnailUrl(640, 360);
+                final String link = getTTVChannelLink(stream.getId());
+                return new EmbedBuilder()
+                        .setAuthor(user, link)
+                        .setTitle(STR.getString("shandler.streams.new.title"), link)
+                        .setDescription(String.format(STR.getString("shandler.streams.new.desc"), title, ""))
+                        .setImage(thumb)
+                        .setThumbnail(ICON_TTV)
+                        .setColor(0x6441A4)
+                        .build();
             } catch (Throwable e) {
                 throw new RuntimeException("Error in getting info", e);
             }
