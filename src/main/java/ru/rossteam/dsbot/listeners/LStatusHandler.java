@@ -23,6 +23,7 @@ public abstract class LStatusHandler extends ListenerAdapter {
 
     @Override
     public void onReady(@Nonnull ReadyEvent event) {
+        jda = event.getJDA();
         try {
             prepare(event);
         } catch (Throwable e) {
@@ -30,7 +31,6 @@ public abstract class LStatusHandler extends ListenerAdapter {
             Messages.tryPrintError(STR.getString("err.unexpected"),
                     Messages.describeException(getClass(), e));
         }
-        jda = event.getJDA();
         callerThread = new CallerThread();
         callerThread.start();
     }
@@ -51,6 +51,11 @@ public abstract class LStatusHandler extends ListenerAdapter {
 
     @SuppressWarnings("BusyWait")
     private class CallerThread extends Thread {
+
+        private CallerThread() {
+            super("SH$CT-" + LStatusHandler.this.getClass().getSimpleName());
+        }
+
         @Override
         public void run() {
             while (!interrupted()) {

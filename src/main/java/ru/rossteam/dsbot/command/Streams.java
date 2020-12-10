@@ -7,10 +7,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Commands;
 import ru.rossteam.dsbot.tools.Messages;
-import ru.rossteam.dsbot.tools.Strings;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -18,6 +16,7 @@ import static ru.rossteam.dsbot.tools.Streams.*;
 import static ru.rossteam.dsbot.tools.Strings.STR;
 
 public class Streams extends CommandAdapter {
+
     @Override
     public void onRequest(@NotNull MessageReceivedEvent event) throws UserInvalidArgumentException {
         Commands.Input input = Commands.parseInput(this, event);
@@ -30,7 +29,7 @@ public class Streams extends CommandAdapter {
             case "get":
                 StringBuilder builder = new StringBuilder();
                 for (String channel: retrieveWatchingList())
-                    builder.append(channel).append('\n');
+                    builder.append("• ").append(channel).append('\n');
                 event.getChannel().sendMessage(new EmbedBuilder()
                         .setTitle(STR.getString("comm.streams.list.title"))
                         .setDescription(builder)
@@ -38,6 +37,7 @@ public class Streams extends CommandAdapter {
                 break;
             case "add":
                 addWatch(event, input);
+                Messages.addOK(event.getMessage());
                 break;
             default:
                 throw new UserInvalidArgumentException("Unknown mode: " + input.getArg(0));
@@ -59,7 +59,7 @@ public class Streams extends CommandAdapter {
             return;
         }
 
-        addToWatchingList("https://www.youtube.com/channel/" + channelID);
+        addToWatchingList(getChannelLink(channelID));
     }
 
     @Override

@@ -45,7 +45,8 @@ public class Main extends ListenerAdapter {
                 )
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)
-                .build().awaitReady();
+                .build();
+        Globals.jda.awaitReady();
     }
 
     private static void handleArguments(String[] args) throws LoginException, IllegalArgumentException {

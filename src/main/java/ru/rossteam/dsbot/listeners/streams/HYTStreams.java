@@ -20,7 +20,7 @@ public class HYTStreams extends LStatusHandler {
     @Override
     public void prepare(ReadyEvent event) {
         try {
-            getYouTube();
+            setupYouTube();
         } catch (GeneralSecurityException | IOException e) {
             throw new RuntimeException(e);
         }

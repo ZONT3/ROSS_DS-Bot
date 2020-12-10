@@ -8,6 +8,9 @@ import java.awt.*;
 import java.time.Instant;
 import java.util.List;
 
+import static ru.rossteam.dsbot.tools.Streams.*;
+import static ru.rossteam.dsbot.tools.Strings.*;
+
 public class Messages {
     public static MessageEmbed error(String title, String description) {
         return new EmbedBuilder()
@@ -25,7 +28,7 @@ public class Messages {
         TextChannel channel = null;
         try {
             channel = Commons.tryFindTChannel(Configs.getLogChannelID(), Globals.jda);
-        } catch (Exception ignored) { };
+        } catch (Exception ignored) { }
         if (channel == null) {
             for (Guild guild: Globals.jda.getGuilds()) {
                 channel = guild.getSystemChannel();
@@ -77,9 +80,30 @@ public class Messages {
 
     public static class Streams {
         public static MessageEmbed newStream(SearchResult result) {
-            return new EmbedBuilder()
+            if (!result.getId().getKind().equals("youtube#video")) throw new IllegalArgumentException("Result isn't video");
 
-                    .build();
+            try {
+                final String channelTitle = result.getSnippet().getChannelTitle();
+                final String title = result.getSnippet().getTitle();
+                final String description = trimSnippet(result.getSnippet().getDescription(), 64);
+                final String thumb = result.getSnippet().getThumbnails().getDefault().getUrl();
+                final String ytLink = getYTLink(result.getId().getVideoId());
+                final String channelLink = getChannelLink(result.getSnippet().getChannelId());
+//                final String ytThumbnail = getYTThumbnail(channelLink);
+
+                return new EmbedBuilder()
+                        .setAuthor(channelTitle, channelLink)
+                        .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
+                        .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
+                                title, description))
+                        .setThumbnail(ICON_YT)
+                        .setImage(thumb)
+                        .setColor(0xFF0000)
+                        .build();
+
+            } catch (Throwable e) {
+                throw new RuntimeException("Error in getting info", e);
+            }
         }
     }
 }

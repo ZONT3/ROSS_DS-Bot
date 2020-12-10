@@ -23,6 +23,10 @@ import java.util.stream.Stream;
 
 public class Streams {
     public static final String REGEX_CHANNEL_ID = "[\\w-]+";
+    public static final String LINK_CHANNEL_ID = "https://www.youtube.com/channel/";
+    public static final String LINK_CHANNEL_NAME = "https://www.youtube.com/c/";
+    public static final String LINK_VIDEO_ID = "https://www.youtube.com/watch?v=";
+    public static final String ICON_YT = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png";
 
     private static final File watchlistFile = new File("db", "watchlist.bin");
 
@@ -39,7 +43,7 @@ public class Streams {
 
         Document document = null;
         if (matchesID) {
-            for (String s: Stream.of("https://www.youtube.com/channel/" + link, "https://www.youtube.com/c/" + link)
+            for (String s: Stream.of(LINK_CHANNEL_ID + link, LINK_CHANNEL_NAME + link)
                     .collect(Collectors.toList())) {
                 try {
                     document = Jsoup.connect(s).get();
@@ -69,7 +73,7 @@ public class Streams {
                 .execute().getItems();
     }
 
-    public static void getYouTube() throws GeneralSecurityException, IOException {
+    public static void setupYouTube() throws GeneralSecurityException, IOException {
         api = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null).setApplicationName("ross-ds-bot").build();
     }
 
@@ -107,7 +111,16 @@ public class Streams {
         }
     }
 
+    public static String getYTThumbnail(String channelLink) throws IOException {
+        return "";
+    }
+
     public static String getYTLink(String videoID) {
-        return "https://www.youtube.com/watch?v=" + videoID;
+        return LINK_VIDEO_ID + videoID;
+    }
+
+    @NotNull
+    public static String getChannelLink(String channelID) {
+        return LINK_CHANNEL_ID + channelID;
     }
 }

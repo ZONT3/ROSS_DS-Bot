@@ -24,4 +24,9 @@ public class Strings {
             return String.format(few, count);
         return String.format(other, count);
     }
+
+    public static String trimSnippet(String original, int count) {
+        int length = original.length();
+        return original.substring(0, Math.min(count, length)) + "...";
+    }
 }
