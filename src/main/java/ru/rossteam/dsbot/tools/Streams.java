@@ -2,10 +2,13 @@ package ru.rossteam.dsbot.tools;
 
 import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
+import com.github.twitch4j.helix.domain.User;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
+import com.google.api.services.youtube.model.Channel;
 import com.google.api.services.youtube.model.SearchResult;
+import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
@@ -97,21 +100,79 @@ public class Streams {
         }
     }
 
-    public static String wlStatementToLink(String statement) {
+    public static Pair<String, String> wlStatementToLink(String statement) {
         final Matcher matcher = Pattern.compile("(\\w+):(.*)").matcher(statement);
         if (!matcher.find()) throw new IllegalArgumentException("Not a WL statement");
-        switch (matcher.group(1)) {
-            case "yt": return getYTLink(matcher.group(2));
-            case "ttv": return getTTVChannelLink(matcher.group(2));
+        final String platform = matcher.group(1);
+        final String identifier = matcher.group(2);
+
+        switch (platform) {
+            case "yt":
+                return new Pair<>(getYTName(identifier), getYTChannelLink(identifier));
+            case "ttv":
+                return new Pair<>(getTTVName(identifier), getTTVChannelLink(identifier));
             default: throw new IllegalArgumentException("Unknown type");
         }
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static String getTTVName(String username) {
+        final List<User> users = getUsersSnippet(username);
+        if (users.size() < 1) throw new IllegalArgumentException("Not found such user");
+        return users.get(0).getDisplayName();
+    }
+
+    public static String getYTName(String id) {
+        final List<Channel> snippet = getChannelSnippet(id);
+        if (snippet.size() < 1) throw new IllegalArgumentException("Not found such user");
+        return snippet.get(0).getSnippet().getTitle();
+    }
+
+    public static String getYTThumbnail(String id) {
+        final List<Channel> snippet = getChannelSnippet(id);
+        if (snippet.size() < 1) throw new IllegalArgumentException("Not found such user");
+        return snippet.get(0).getSnippet().getThumbnails().getDefault().getUrl();
+    }
+
+    public static String getTTVThumbnail(String username) {
+        final List<User> users = getUsersSnippet(username);
+        if (users.size() < 1) throw new IllegalArgumentException("Not found such user");
+        return users.get(0).getProfileImageUrl();
+    }
+
+    private static List<User> getUsersSnippet(String username) {
+        if (helix == null) throw new NullPointerException("API instance");
+        return helix.getUsers(null, null, Collections.singletonList(username)).execute().getUsers();
+    }
+
+    private static List<Channel> getChannelSnippet(String id) {
+        if (api == null) throw new NullPointerException("API instance");
+
+        final List<Channel> snippet;
+        try {
+            snippet = api.channels().list("snippet")
+                    .setKey(Globals.GOOGLE_API)
+                    .setId(id)
+                    .execute().getItems();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return snippet;
+    }
+
     public static void addToWatchingList(String link) {
         HashSet<String> set = retrieveWatchingList();
         set.add(link);
+        commitWL(set);
+    }
 
+    public static void removeFromWatchingList(String res) {
+        HashSet<String> set = retrieveWatchingList();
+        set.removeIf(s -> s.replaceFirst("\\w+:", "").equals(res));
+        commitWL(set);
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static void commitWL(HashSet<String> set) {
         if (!watchlistFile.exists())
             watchlistFile.getParentFile().mkdirs();
 
@@ -125,11 +186,7 @@ public class Streams {
         }
     }
 
-    public static String getYTThumbnail(String channelLink) throws IOException {
-        return "";
-    }
-
-    public static String getYTLink(String videoID) {
+    public static String getYTVideoLink(String videoID) {
         return LINK_VIDEO_ID + videoID;
     }
 

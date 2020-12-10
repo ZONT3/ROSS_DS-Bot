@@ -14,7 +14,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import ru.rossteam.dsbot.listeners.HClientsTS;
-import ru.rossteam.dsbot.listeners.streams.HStreams;
+import ru.rossteam.dsbot.listeners.HStreams;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.rossteam.dsbot.command.CommandAdapter;
 import ru.rossteam.dsbot.tools.Configs;

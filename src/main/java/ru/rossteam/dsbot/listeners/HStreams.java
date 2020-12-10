@@ -1,4 +1,4 @@
-package ru.rossteam.dsbot.listeners.streams;
+package ru.rossteam.dsbot.listeners;
 
 import com.github.twitch4j.helix.domain.Stream;
 import com.google.api.services.youtube.model.SearchResult;

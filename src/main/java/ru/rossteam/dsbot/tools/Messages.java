@@ -86,14 +86,14 @@ public class Messages {
             try {
                 final String channelTitle = result.getSnippet().getChannelTitle();
                 final String title = result.getSnippet().getTitle();
-                final String description = trimSnippet(result.getSnippet().getDescription(), 64);
+                final String description = trimSnippet(result.getSnippet().getDescription(), 180);
                 final String thumb = result.getSnippet().getThumbnails().getDefault().getUrl();
-                final String ytLink = getYTLink(result.getId().getVideoId());
+                final String ytLink = getYTVideoLink(result.getId().getVideoId());
                 final String channelLink = getYTChannelLink(result.getSnippet().getChannelId());
-//                final String ytThumbnail = getYTThumbnail(channelLink);
-                // TODO Здесь и ниже - фамнейл канала
+                final String ytThumbnail = getYTThumbnail(result.getSnippet().getChannelId());
+
                 return new EmbedBuilder()
-                        .setAuthor(channelTitle, channelLink)
+                        .setAuthor(channelTitle, channelLink, ytThumbnail)
                         .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
                                 title, description))
@@ -111,11 +111,13 @@ public class Messages {
 
             try {
                 final String title = stream.getTitle();
-                final String user = stream.getUserName();
-                final String thumb = stream.getThumbnailUrl(640, 360);
-                final String link = getTTVChannelLink(stream.getId());
+                final String name = stream.getUserName();
+                final String thumb = stream.getThumbnailUrl(480, 270);
+                final String link = getTTVChannelLink(name);
+                final String ttvThumbnail = getTTVThumbnail(name);
+
                 return new EmbedBuilder()
-                        .setAuthor(user, link)
+                        .setAuthor(name, link, ttvThumbnail)
                         .setTitle(STR.getString("shandler.streams.new.title"), link)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"), title, ""))
                         .setImage(thumb)
