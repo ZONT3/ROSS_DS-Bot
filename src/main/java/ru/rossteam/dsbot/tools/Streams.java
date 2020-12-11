@@ -18,6 +18,7 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -76,12 +77,19 @@ public class Streams {
     public static List<SearchResult> getYTStreams(String channelId) throws IOException {
         if (api == null) throw new NullPointerException("API instance");
 
-        return api.search().list("snippet")
-                .setKey(Globals.GOOGLE_API)
-                .setChannelId(channelId)
-                .setType("video")
-                .setEventType("live")
-                .execute().getItems();
+        final List<SearchResult> items;
+        try {
+            items = api.search().list("snippet")
+                    .setKey(Globals.GOOGLE_API)
+                    .setChannelId(channelId)
+                    .setType("video")
+                    .setEventType("live")
+                    .execute().getItems();
+        } catch (IOException e) {
+//            LOG.d("Cannot fetch streams");
+            return new ArrayList<>();
+        }
+        return items;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -117,13 +125,13 @@ public class Streams {
 
     public static String getYTName(String id) {
         final List<Channel> snippet = getChannelSnippet(id);
-        if (snippet.size() < 1) throw new IllegalArgumentException("Not found such user");
+        if (snippet.size() < 1) return "???"; /*throw new IllegalArgumentException("Not found such user");*/
         return snippet.get(0).getSnippet().getTitle();
     }
 
     public static String getYTThumbnail(String id) {
         final List<Channel> snippet = getChannelSnippet(id);
-        if (snippet.size() < 1) throw new IllegalArgumentException("Not found such user");
+        if (snippet.size() < 1) return "???"; /*throw new IllegalArgumentException("Not found such user");*/
         return snippet.get(0).getSnippet().getThumbnails().getDefault().getUrl();
     }
 
@@ -148,7 +156,8 @@ public class Streams {
                     .setId(id)
                     .execute().getItems();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            LOG.d("Cannot fetch channels");
+            return new ArrayList<>();
         }
         return snippet;
     }
