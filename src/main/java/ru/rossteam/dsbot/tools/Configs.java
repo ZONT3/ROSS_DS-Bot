@@ -31,12 +31,19 @@ public class Configs {
         return id;
     }
 
+    public static String getNewsChannelID() {
+        String id = getGlobalProps().getProperty("channel_news");
+        checkIDStatement(id);
+        return id;
+    }
+
     public static Properties getGlobalPropsDefaults() {
         return new Properties(){{
             setProperty("command_prefix", "r.");
             setProperty("channel_ts_online", "0");
             setProperty("channel_log", "0");
             setProperty("channel_streams", "0");
+            setProperty("channel_news", "0");
             setProperty("TA_IDS", "331524458806247426");
         }};
     }

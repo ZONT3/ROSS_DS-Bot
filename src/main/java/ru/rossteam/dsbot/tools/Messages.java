@@ -4,11 +4,13 @@ import com.github.twitch4j.helix.domain.Stream;
 import com.google.api.services.youtube.model.SearchResult;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import ru.rossteam.dsbot.tools.Site.NewsEntry;
 
 import java.awt.*;
 import java.time.Instant;
 import java.util.List;
 
+import static ru.rossteam.dsbot.tools.Site.*;
 import static ru.rossteam.dsbot.tools.Streams.*;
 import static ru.rossteam.dsbot.tools.Strings.*;
 
@@ -80,6 +82,21 @@ public class Messages {
 
     public static void addOK(Message msg) {
         msg.addReaction("\u2705").queue();
+    }
+
+    public static class Site {
+        public static MessageEmbed newTopic(NewsEntry entry) {
+            return new EmbedBuilder()
+                    .setAuthor(STR.getString("shandler.site.news.title"), LINK_SITE)
+                    .setTitle(entry.getTitle(), entry.getHref())
+                    .setDescription(entry.getDesc())
+                    .appendDescription(String.format("\n\n[%s](%s)",
+                            STR.getString("shandler.site.news.read"),
+                            entry.getHref()))
+                    .setImage(entry.getThumb())
+                    .setColor(0x2A2AD0)
+                    .build();
+        }
     }
 
     public static class Streams {

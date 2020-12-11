@@ -34,7 +34,7 @@ public class Streams {
     public static final String ICON_YT = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/1024px-YouTube_full-color_icon_%282017%29.svg.png";
     public static final String ICON_TTV = "https://assets.help.twitch.tv/Glitch_Purple_RGB.png";
 
-    private static final File watchlistFile = new File("db", "watchlist.bin");
+    private static final File watchlistFile = new File(Globals.DIR_DB, "watchlist.bin");
 
     public static YouTube api;
     public static TwitchHelix helix;
@@ -84,20 +84,14 @@ public class Streams {
                 .execute().getItems();
     }
 
-    @SuppressWarnings({"ResultOfMethodCallIgnored", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     public static HashSet<String> retrieveWatchingList() {
-        if (!watchlistFile.exists()) {
-            watchlistFile.getParentFile().mkdirs();
-            return new HashSet<>();
-        }
+        final Object o = Commons.retrieveObject(watchlistFile);
+        return o != null ? (HashSet<String>) o : new HashSet<>();
+    }
 
-        try (FileInputStream fis = new FileInputStream(watchlistFile);
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-            return (HashSet<String>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            watchlistFile.delete();
-            throw new RuntimeException(e);
-        }
+    private static void commitWL(HashSet<String> set) {
+        Commons.commitObject(watchlistFile, set);
     }
 
     public static Pair<String, String> wlStatementToLink(String statement) {
@@ -169,21 +163,6 @@ public class Streams {
         HashSet<String> set = retrieveWatchingList();
         set.removeIf(s -> s.equalsIgnoreCase(res));
         commitWL(set);
-    }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    private static void commitWL(HashSet<String> set) {
-        if (!watchlistFile.exists())
-            watchlistFile.getParentFile().mkdirs();
-
-        try (FileOutputStream fos = new FileOutputStream(watchlistFile);
-             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeObject(set);
-            oos.flush();
-        } catch (IOException e) {
-            watchlistFile.delete();
-            throw new RuntimeException(e);
-        }
     }
 
     public static String getYTVideoLink(String videoID) {

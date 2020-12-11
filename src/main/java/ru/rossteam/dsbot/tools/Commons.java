@@ -7,6 +7,9 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.*;
+import java.util.HashSet;
+
 import static ru.rossteam.dsbot.tools.Strings.STR;
 
 public class Commons {
@@ -36,5 +39,36 @@ public class Commons {
     public static void reportError(Throwable e, Class<?> klass) {
         e.printStackTrace();
         Messages.tryPrintError(STR.getString("err.unexpected"), Messages.describeException(klass, e));
+    }
+
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
+    public static Object retrieveObject(File f) {
+        if (!f.exists()) {
+            f.getParentFile().mkdirs();
+            return null;
+        }
+
+        try (FileInputStream fis = new FileInputStream(f);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            return ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            f.delete();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @SuppressWarnings({"ResultOfMethodCallIgnored"})
+    public static void commitObject(File f, Object o) {
+        if (!f.exists())
+            f.getParentFile().mkdirs();
+
+        try (FileOutputStream fos = new FileOutputStream(f);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            oos.writeObject(o);
+            oos.flush();
+        } catch (IOException e) {
+            f.delete();
+            throw new RuntimeException(e);
+        }
     }
 }
