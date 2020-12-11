@@ -100,10 +100,10 @@ public class Streams extends CommandAdapter {
 
     @Override
     public String getSynopsis() {
-        return "streams <get|list|add|rm> ...\n" +
+        return "streams get|list|add|rm ...\n" +
                 "streams get|list\n" +
-                "streams add <link|channelID|username>\n" +
-                "streams rm <link|channelID|username>";
+                "streams add <link>|<channelID>|<username>\n" +
+                "streams rm <link>|<channelID>|<username>";
     }
 
     @Override
