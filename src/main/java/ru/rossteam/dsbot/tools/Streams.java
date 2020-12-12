@@ -7,7 +7,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.Channel;
-import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.Video;
 import javafx.util.Pair;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.HttpStatusException;
@@ -16,7 +16,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -74,22 +75,11 @@ public class Streams {
         throw new RuntimeException("Cannot find canonical link");
     }
 
-    public static List<SearchResult> getYTStreams(String channelId) throws IOException {
-        if (api == null) throw new NullPointerException("API instance");
-
-        final List<SearchResult> items;
-        try {
-            items = api.search().list("snippet")
-                    .setKey(Globals.GOOGLE_API)
-                    .setChannelId(channelId)
-                    .setType("video")
-                    .setEventType("live")
-                    .execute().getItems();
-        } catch (IOException e) {
-//            LOG.d("Cannot fetch streams");
-            return new ArrayList<>();
-        }
-        return items;
+    public static YTStream getYTStream(String channelId) throws IOException {
+        final String canonical = Jsoup.connect(LINK_CHANNEL_ID + channelId + "/live").get().body()
+                .getElementsByAttributeValue("rel", "canonical").first().attributes().get("href");
+        if (!canonical.contains("watch?")) return null;
+        return new YTStream(channelId, canonical);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -129,12 +119,6 @@ public class Streams {
         return snippet.get(0).getSnippet().getTitle();
     }
 
-    public static String getYTThumbnail(String id) {
-        final List<Channel> snippet = getChannelSnippet(id);
-        if (snippet.size() < 1) return "???"; /*throw new IllegalArgumentException("Not found such user");*/
-        return snippet.get(0).getSnippet().getThumbnails().getDefault().getUrl();
-    }
-
     public static String getTTVThumbnail(String username) {
         final List<User> users = getUsersSnippet(username);
         if (users.size() < 1) throw new IllegalArgumentException("Not found such user");
@@ -146,12 +130,28 @@ public class Streams {
         return helix.getUsers(null, null, Collections.singletonList(username)).execute().getUsers();
     }
 
-    private static List<Channel> getChannelSnippet(String id) {
+    public static List<Channel> getChannelSnippet(String id) {
         if (api == null) throw new NullPointerException("API instance");
 
         final List<Channel> snippet;
         try {
             snippet = api.channels().list("snippet")
+                    .setKey(Globals.GOOGLE_API)
+                    .setId(id)
+                    .execute().getItems();
+        } catch (IOException e) {
+//            LOG.d("Cannot fetch channels");
+            return new ArrayList<>();
+        }
+        return snippet;
+    }
+
+    public static List<Video> getVideoSnippet(String id) {
+        if (api == null) throw new NullPointerException("API instance");
+
+        final List<Video> snippet;
+        try {
+            snippet = api.videos().list("snippet")
                     .setKey(Globals.GOOGLE_API)
                     .setId(id)
                     .execute().getItems();
@@ -209,5 +209,38 @@ public class Streams {
         if (matcher.find()) return matcher.group(1);
         else if (link.matches(REGEX_CHANNEL_ID)) return link;
         else throw new IOException("Cannot parse twitch userid");
+    }
+
+    public static class YTStream {
+
+        private final String channelID;
+        private final String link;
+
+        public YTStream(String channelID, String link) {
+            this.channelID = channelID;
+            this.link = link;
+        }
+
+        public String getChannelID() {
+            return channelID;
+        }
+
+        public String getLink() {
+            return link;
+        }
+
+        public String getVideoID() {
+            final Matcher matcher = Pattern.compile("v=(" + REGEX_CHANNEL_ID + ")").matcher(link);
+            if (!matcher.find()) return "";
+            return matcher.group(1);
+        }
+
+        @Override
+        public String toString() {
+            return "YTStream{" +
+                    "channelID='" + channelID + '\'' +
+                    ", link='" + link + '\'' +
+                    '}';
+        }
     }
 }

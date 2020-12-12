@@ -1,17 +1,16 @@
 package ru.rossteam.dsbot.listeners;
 
 import com.github.twitch4j.helix.domain.Stream;
-import com.google.api.services.youtube.model.SearchResult;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import ru.rossteam.dsbot.listeners.LStatusHandler;
 import ru.rossteam.dsbot.tools.Configs;
 import ru.rossteam.dsbot.tools.Messages;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.*;
-import java.util.function.Consumer;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import static ru.rossteam.dsbot.tools.Streams.*;
 
@@ -34,9 +33,10 @@ public class HStreams extends LStatusHandler {
         try {
             for (String link: retrieveWatchingList()) {
                 if (link.startsWith("yt:")) {
-                    for (SearchResult result: getYTStreams(link.replaceFirst("yt:", "")))
-                        if (!committed.contains(result.getId().getVideoId()))
-                            commitYTStream(result);
+                    final YTStream stream = getYTStream(link.replaceFirst("yt:", ""));
+                    if (stream != null)
+                        if (!committed.contains(stream.getLink()))
+                            commitYTStream(stream);
                 } else if (link.startsWith("ttv:")) {
                     for (Stream stream: getTTVStreams(link.replaceFirst("ttv:", "")))
                         if (!committed.contains(stream.getId()))
@@ -60,15 +60,15 @@ public class HStreams extends LStatusHandler {
         });
     }
 
-    private void commitYTStream(SearchResult result) {
+    private void commitYTStream(YTStream result) {
         MessageChannel channel = tryFindTChannel(Configs.getStreamsChannelID());
 
-        String id = result.getId().getVideoId();
-        committed.add(id);
+        String link = result.getChannelID();
+        committed.add(link);
         channel.sendMessage(Messages.Streams.newYTStream(result)).queue(null, throwable -> {
             Messages.tryPrintError("Cannot commit a new stream notation",
                     Messages.describeException(throwable));
-            committed.remove(id);
+            committed.remove(link);
         });
     }
 

@@ -1,7 +1,7 @@
 package ru.rossteam.dsbot.tools;
 
 import com.github.twitch4j.helix.domain.Stream;
-import com.google.api.services.youtube.model.SearchResult;
+import com.google.api.services.youtube.model.*;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import ru.rossteam.dsbot.tools.Site.NewsEntry;
@@ -100,23 +100,26 @@ public class Messages {
     }
 
     public static class Streams {
-        public static MessageEmbed newYTStream(SearchResult result) {
-            if (!result.getId().getKind().equals("youtube#video")) throw new IllegalArgumentException("Result isn't video");
-
+        public static MessageEmbed newYTStream(YTStream result) {
             try {
-                final String channelTitle = result.getSnippet().getChannelTitle();
-                final String title = result.getSnippet().getTitle();
-                final String description = trimSnippet(result.getSnippet().getDescription(), 180);
-                final String thumb = result.getSnippet().getThumbnails().getDefault().getUrl();
-                final String ytLink = getYTVideoLink(result.getId().getVideoId());
-                final String channelLink = getYTChannelLink(result.getSnippet().getChannelId());
-                final String ytThumbnail = getYTThumbnail(result.getSnippet().getChannelId());
+                final String videoID = result.getVideoID();
+                final String channelID = result.getChannelID();
+                final ChannelSnippet channel = getChannelSnippet(channelID).get(0).getSnippet();
+                final VideoSnippet video = getVideoSnippet(videoID).get(0).getSnippet();
+
+                final String channelTitle = channel.getTitle();
+                final String title = video.getTitle();
+                final String desc = trimSnippet(video.getDescription(), 64);
+                final String thumb = video.getThumbnails().getDefault().getUrl();
+                final String ytLink = getYTVideoLink(videoID);
+                final String channelLink = getYTChannelLink(channelID);
+                final String ytThumbnail = channel.getThumbnails().getDefault().getUrl();
 
                 return new EmbedBuilder()
                         .setAuthor(channelTitle, channelLink, ytThumbnail)
                         .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
-                                title, description))
+                                title, desc))
                         .setThumbnail(ICON_YT)
                         .setImage(thumb)
                         .setColor(0xFF0000)
