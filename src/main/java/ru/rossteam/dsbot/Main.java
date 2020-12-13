@@ -14,6 +14,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 import ru.rossteam.dsbot.listeners.HClientsTS;
+import ru.rossteam.dsbot.listeners.HEvents;
 import ru.rossteam.dsbot.listeners.HNews;
 import ru.rossteam.dsbot.listeners.HStreams;
 import ru.rossteam.dsbot.tools.Globals;
@@ -44,6 +45,7 @@ public class Main extends ListenerAdapter {
                         ,Globals.ytStreams = new HStreams()
                         ,Globals.usersMonitoring = new HClientsTS()
                         ,Globals.news = new HNews()
+                        ,Globals.events = new HEvents()
                 )
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .setChunkingFilter(ChunkingFilter.ALL)

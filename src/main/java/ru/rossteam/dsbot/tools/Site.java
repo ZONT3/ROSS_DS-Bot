@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 
 public class Site {
@@ -38,8 +37,9 @@ public class Site {
                             .attributes().get("href");
                     final String title = li.getElementsByTag("h2").first().getElementsByTag("a")
                             .first().text();
-                    final LocalDate date = LocalDate.parse(
-                            li.getElementsByTag("span").first().text(),
+                    final String dateText = li.getElementsByTag("span").first().text();
+                    final LocalDate date = dateText.isEmpty() ? null : LocalDate.parse(
+                            dateText,
                             DateTimeFormatter.ofPattern("dd.MM.yyyy"));
 
                     final NewsEntry entry = new NewsEntry(href, date, title);

@@ -1,18 +1,22 @@
 package ru.rossteam.dsbot.tools;
 
 import com.github.twitch4j.helix.domain.Stream;
-import com.google.api.services.youtube.model.*;
+import com.google.api.services.youtube.model.ChannelSnippet;
+import com.google.api.services.youtube.model.VideoSnippet;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Site.NewsEntry;
 
 import java.awt.*;
 import java.time.Instant;
+import java.time.ZoneId;
 import java.util.List;
 
-import static ru.rossteam.dsbot.tools.Site.*;
+import static ru.rossteam.dsbot.tools.Site.LINK_SITE;
 import static ru.rossteam.dsbot.tools.Streams.*;
-import static ru.rossteam.dsbot.tools.Strings.*;
+import static ru.rossteam.dsbot.tools.Strings.STR;
+import static ru.rossteam.dsbot.tools.Strings.trimSnippet;
 
 public class Messages {
     public static MessageEmbed error(String title, String description) {
@@ -97,6 +101,25 @@ public class Messages {
                     .setColor(0x2A2AD0)
                     .build();
         }
+
+        public static MessageEmbed newEvent(Events.Event event) {
+            return eventEmbed(event, STR.getString("shandler.site.event.new"));
+        }
+
+        public static MessageEmbed notifyEvent(Events.Event event) {
+            return eventEmbed(event, STR.getString("shandler.site.event.day"));
+        }
+
+        @NotNull
+        private static MessageEmbed eventEmbed(Events.Event event, String title) {
+            return new EmbedBuilder()
+                    .setAuthor(title)
+                    .setTitle(event.getTitle(), event.getLink())
+                    .setTimestamp(event.getDate().atStartOfDay(ZoneId.of("GMT+3")).toInstant())
+                    .setDescription(Events.tryRetrieveDescription(event))
+                    .setColor(0xA81010)
+                    .build();
+        }
     }
 
     public static class Streams {
@@ -117,7 +140,7 @@ public class Messages {
 
                 return new EmbedBuilder()
                         .setAuthor(channelTitle, channelLink, ytThumbnail)
-                        .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
+                        .setTitle(STR.getString("shandler.streams.new.title.yt"), ytLink)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
                                 title, desc))
                         .setThumbnail(ICON_YT)

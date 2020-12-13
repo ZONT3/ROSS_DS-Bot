@@ -3,16 +3,15 @@ package ru.rossteam.dsbot.tools;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.GuildChannel;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.util.HashSet;
-
-import static ru.rossteam.dsbot.tools.Strings.STR;
+import java.time.LocalDate;
 
 public class Commons {
+
+    public static final LocalDate DONT_POST_BEFORE = LocalDate.of(2020, 12, 10);
 
     @NotNull
     public static GuildChannel tryFindChannel(String channelID, JDA jda) throws NullPointerException {
@@ -38,7 +37,7 @@ public class Commons {
 
     public static void reportError(Throwable e, Class<?> klass) {
         e.printStackTrace();
-        Messages.tryPrintError(STR.getString("err.unexpected"), Messages.describeException(klass, e));
+//        Messages.tryPrintError(STR.getString("err.unexpected"), Messages.describeException(klass, e));
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored"})

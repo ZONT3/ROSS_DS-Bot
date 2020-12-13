@@ -13,28 +13,30 @@ public class Configs {
     private static Properties gPropertiesCache = null;
     private static long gPropertiesCacheTS = 0;
 
-    public static String getTSCountChannelID() {
-        String id = getGlobalProps().getProperty("channel_ts_online");
+    private static String getChannelID(String channel_streams) {
+        String id = getGlobalProps().getProperty(channel_streams);
         checkIDStatement(id);
         return id;
+    }
+
+    public static String getTSCountChannelID() {
+        return getChannelID("channel_ts_online");
     }
 
     public static String getLogChannelID() {
-        String id = getGlobalProps().getProperty("channel_log");
-        checkIDStatement(id);
-        return id;
+        return getChannelID("channel_log");
     }
 
     public static String getStreamsChannelID() {
-        String id = getGlobalProps().getProperty("channel_streams");
-        checkIDStatement(id);
-        return id;
+        return getChannelID("channel_streams");
     }
 
     public static String getNewsChannelID() {
-        String id = getGlobalProps().getProperty("channel_news");
-        checkIDStatement(id);
-        return id;
+        return getChannelID("channel_news");
+    }
+
+    public static String getEventsChannelID() {
+        return getChannelID("channel_events");
     }
 
     public static Properties getGlobalPropsDefaults() {
@@ -44,6 +46,7 @@ public class Configs {
             setProperty("channel_log", "0");
             setProperty("channel_streams", "0");
             setProperty("channel_news", "0");
+            setProperty("channel_events", "0");
             setProperty("TA_IDS", "331524458806247426");
         }};
     }

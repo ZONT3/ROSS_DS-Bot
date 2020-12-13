@@ -2,11 +2,10 @@ package ru.rossteam.dsbot.listeners;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import ru.rossteam.dsbot.tools.Commons;
 import ru.rossteam.dsbot.tools.Configs;
 import ru.rossteam.dsbot.tools.Messages;
-import ru.rossteam.dsbot.tools.Site;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -19,29 +18,28 @@ public class HNews extends LStatusHandler {
     }
 
     @Override
-    public void update() {
-        try {
-            final ArrayList<NewsEntry> newsEntries = parseNews();
-            final HashSet<String> set = retrieveCommittedSet();
-            for (NewsEntry entry: newsEntries) {
-                if (set.contains(entry.getHref())) continue;
-                if (!entry.getDate().isAfter(LocalDate.of(2020, 12, 1))) continue;
-
-                set.add(entry.getHref());
-                post(entry);
-            }
-            commitSet(set);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+    public void update() throws Exception {
+        final ArrayList<NewsEntry> newsEntries = parseNews();
+        final HashSet<String> set = retrieveCommittedSet();
+        for (NewsEntry entry: newsEntries) {
+            if (set.contains(entry.getHref())) continue;
+            if (entry.getDate() != null && entry.getDate().isBefore(Commons.DONT_POST_BEFORE)) continue;
+            post(entry, set);
         }
     }
 
-    private void post(NewsEntry entry) {
+    private void post(NewsEntry entry, HashSet<String> set) {
         final MessageChannel channel = tryFindTChannel(Configs.getNewsChannelID());
 
+        synchronized (set) {
+            set.add(entry.getHref());
+            commitSet(set);
+        }
         channel.sendMessage(Messages.Site.newTopic(entry)).queue(null, e -> {
-            final HashSet<String> set = retrieveCommittedSet();
-            set.remove(entry.getHref());
+            synchronized (set) {
+                set.remove(entry.getHref());
+                commitSet(set);
+            }
         });
     }
 

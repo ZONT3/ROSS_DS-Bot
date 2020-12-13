@@ -29,22 +29,18 @@ public class HStreams extends LStatusHandler {
     }
 
     @Override
-    public void update() {
-        try {
-            for (String link: retrieveWatchingList()) {
-                if (link.startsWith("yt:")) {
-                    final YTStream stream = getYTStream(link.replaceFirst("yt:", ""));
-                    if (stream != null)
-                        if (!committed.contains(stream.getLink()))
-                            commitYTStream(stream);
-                } else if (link.startsWith("ttv:")) {
-                    for (Stream stream: getTTVStreams(link.replaceFirst("ttv:", "")))
-                        if (!committed.contains(stream.getId()))
-                            commitTTVStream(stream);
-                }
+    public void update() throws Exception {
+        for (String link: retrieveWatchingList()) {
+            if (link.startsWith("yt:")) {
+                final YTStream stream = getYTStream(link.replaceFirst("yt:", ""));
+                if (stream != null)
+                    if (!committed.contains(stream.getLink()))
+                        commitYTStream(stream);
+            } else if (link.startsWith("ttv:")) {
+                for (Stream stream: getTTVStreams(link.replaceFirst("ttv:", "")))
+                    if (!committed.contains(stream.getId()))
+                        commitTTVStream(stream);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 

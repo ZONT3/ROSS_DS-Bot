@@ -14,8 +14,8 @@ public abstract class LStatusHandler extends ListenerAdapter {
     private CallerThread callerThread;
     private JDA jda;
 
-    public abstract void prepare(ReadyEvent event);
-    public abstract void update();
+    public abstract void prepare(ReadyEvent event) throws Exception;
+    public abstract void update() throws Exception;
     public abstract long getPeriod();
 
     @Override
