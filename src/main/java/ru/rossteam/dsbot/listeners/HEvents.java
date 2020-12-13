@@ -26,7 +26,7 @@ public class HEvents extends LStatusHandler {
         final HashSet<Event> events = getEvents();
         final HashSet<String> set = retrieveCommitted();
         for (Event event: events) {
-            if (event.getDate().isBefore(Commons.DONT_POST_BEFORE))
+            if (event.getDate().isBefore(Commons.DONT_POST_BEFORE)) continue;
             if (!set.contains(event.getLink()))
                 reportNewEvent(event, set);
             final LocalDate now = LocalDate.now(ZoneId.of("GMT+3"));
