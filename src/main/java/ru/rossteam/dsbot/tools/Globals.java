@@ -7,7 +7,7 @@ import ru.rossteam.dsbot.listeners.HNews;
 import ru.rossteam.dsbot.listeners.LStatusHandler;
 
 public class Globals {
-    public static final String version = "1.0-SNAPSHOT";
+    public static final String version = "1.0";
     public static final String ZONT_MENTION = "<@331524458806247426>";
     public static final String DIR_DB = "db";
 

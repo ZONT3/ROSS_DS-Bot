@@ -31,7 +31,8 @@ public class HEvents extends LStatusHandler {
                 reportNewEvent(event, set);
             final LocalDate now = LocalDate.now(ZoneId.of("GMT+3"));
             if (event.getDate().isEqual(now) && Calendar.getInstance().get(Calendar.HOUR_OF_DAY) > 11)
-                reportCurrEvent(event, set);
+                if (!set.contains("C:" + event.getLink()))
+                    reportCurrEvent(event, set);
         }
     }
 
