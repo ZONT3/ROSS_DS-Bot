@@ -75,11 +75,15 @@ public class Streams {
         throw new RuntimeException("Cannot find canonical link");
     }
 
-    public static YTStream getYTStream(String channelId) throws IOException {
-        final String canonical = Jsoup.connect(LINK_CHANNEL_ID + channelId + "/live").get().body()
-                .getElementsByAttributeValue("rel", "canonical").first().attributes().get("href");
-        if (!canonical.contains("watch?")) return null;
-        return new YTStream(channelId, canonical);
+    public static YTStream getYTStream(String channelId) {
+        try {
+            final String canonical = Jsoup.connect(LINK_CHANNEL_ID + channelId + "/live").get().body()
+                    .getElementsByAttributeValue("rel", "canonical").first().attributes().get("href");
+            if (!canonical.contains("watch?")) return null;
+            return new YTStream(channelId, canonical);
+        } catch (Throwable ignored) {
+            return null;
+        }
     }
 
     @SuppressWarnings({"unchecked"})

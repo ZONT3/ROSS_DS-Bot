@@ -4,6 +4,7 @@ import com.github.twitch4j.helix.domain.Stream;
 import com.google.api.services.youtube.model.ChannelSnippet;
 import com.google.api.services.youtube.model.VideoSnippet;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Site.NewsEntry;
@@ -88,9 +89,16 @@ public class Messages {
         msg.addReaction("\u2705").queue();
     }
 
+    private static Message pushEveryone(MessageEmbed build) {
+        return new MessageBuilder()
+                .append("@everyone")
+                .setEmbed(build)
+                .build();
+    }
+
     public static class Site {
-        public static MessageEmbed newTopic(NewsEntry entry) {
-            return new EmbedBuilder()
+        public static Message newTopic(NewsEntry entry) {
+            return pushEveryone(new EmbedBuilder()
                     .setAuthor(STR.getString("shandler.site.news.title"), LINK_SITE)
                     .setTitle(entry.getTitle(), entry.getHref())
                     .setDescription(entry.getDesc())
@@ -99,31 +107,32 @@ public class Messages {
                             entry.getHref()))
                     .setImage(entry.getThumb())
                     .setColor(0x2A2AD0)
-                    .build();
+                    .build());
         }
 
-        public static MessageEmbed newEvent(Events.Event event) {
+        public static Message newEvent(Events.Event event) {
             return eventEmbed(event, STR.getString("shandler.site.event.new"));
         }
 
-        public static MessageEmbed notifyEvent(Events.Event event) {
+        public static Message notifyEvent(Events.Event event) {
             return eventEmbed(event, STR.getString("shandler.site.event.day"));
         }
 
         @NotNull
-        private static MessageEmbed eventEmbed(Events.Event event, String title) {
-            return new EmbedBuilder()
+        private static Message eventEmbed(Events.Event event, String title) {
+            return pushEveryone(new EmbedBuilder()
                     .setAuthor(title)
                     .setTitle(event.getTitle(), event.getLink())
-                    .setTimestamp(event.getDate().atStartOfDay(ZoneId.of("GMT+3")).toInstant())
+                    .setTimestamp(event.getDate().atStartOfDay(ZoneId.of("GMT+3")).plusHours(12).toInstant())
                     .setDescription(Events.tryRetrieveDescription(event))
                     .setColor(0xA81010)
-                    .build();
+                    .build());
         }
+
     }
 
     public static class Streams {
-        public static MessageEmbed newYTStream(YTStream result) {
+        public static Message newYTStream(YTStream result) {
             try {
                 final String videoID = result.getVideoID();
                 final String channelID = result.getChannelID();
@@ -138,7 +147,7 @@ public class Messages {
                 final String channelLink = getYTChannelLink(channelID);
                 final String ytThumbnail = channel.getThumbnails().getDefault().getUrl();
 
-                return new EmbedBuilder()
+                return pushEveryone(new EmbedBuilder()
                         .setAuthor(channelTitle, channelLink, ytThumbnail)
                         .setTitle(STR.getString("shandler.streams.new.title.yt"), ytLink)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
@@ -146,14 +155,14 @@ public class Messages {
                         .setThumbnail(ICON_YT)
                         .setImage(thumb)
                         .setColor(0xFF0000)
-                        .build();
+                        .build());
 
             } catch (Throwable e) {
                 throw new RuntimeException("Error in getting info", e);
             }
         }
 
-        public static MessageEmbed newTTVStream(Stream stream) {
+        public static Message newTTVStream(Stream stream) {
 
             try {
                 final String title = stream.getTitle();
@@ -162,14 +171,14 @@ public class Messages {
                 final String link = getTTVChannelLink(name);
                 final String ttvThumbnail = getTTVThumbnail(name);
 
-                return new EmbedBuilder()
+                return pushEveryone(new EmbedBuilder()
                         .setAuthor(name, link, ttvThumbnail)
                         .setTitle(STR.getString("shandler.streams.new.title"), link)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"), title, ""))
                         .setImage(thumb)
                         .setThumbnail(ICON_TTV)
                         .setColor(0x6441A4)
-                        .build();
+                        .build());
             } catch (Throwable e) {
                 throw new RuntimeException("Error in getting info", e);
             }

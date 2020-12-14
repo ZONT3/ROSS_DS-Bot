@@ -1,7 +1,7 @@
 package ru.rossteam.dsbot.listeners;
 
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import ru.rossteam.dsbot.tools.Commons;
 import ru.rossteam.dsbot.tools.Configs;
@@ -35,13 +35,14 @@ public class HEvents extends LStatusHandler {
         }
     }
 
-    private void reportEvent(String sign, HashSet<String> set, MessageEmbed embed) {
+    private void reportEvent(String sign, HashSet<String> set, Message embed) {
         final MessageChannel channel = tryFindTChannel(Configs.getEventsChannelID());
 
         synchronized (set) {
             set.add(sign);
             commitEventSet(set);
         }
+
         channel.sendMessage(embed).queue(null, e -> {
             synchronized (set) {
                 set.remove(sign);
