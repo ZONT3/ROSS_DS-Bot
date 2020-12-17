@@ -149,7 +149,7 @@ public class Messages {
 
                 return pushEveryone(new EmbedBuilder()
                         .setAuthor(channelTitle, channelLink, ytThumbnail)
-                        .setTitle(STR.getString("shandler.streams.new.title.yt"), ytLink)
+                        .setTitle(STR.getString("shandler.streams.new.title"), ytLink)
                         .setDescription(String.format(STR.getString("shandler.streams.new.desc"),
                                 title, desc))
                         .setThumbnail(ICON_YT)

@@ -60,7 +60,8 @@ public class Streams {
                     .collect(Collectors.toList())) {
                 try {
                     document = Jsoup.connect(s).get();
-                } catch (HttpStatusException ignored) {}
+                } catch (HttpStatusException ignored) {
+                }
                 if (document != null) break;
             }
         } else document = Jsoup.connect(link).get();
@@ -80,7 +81,11 @@ public class Streams {
             final String canonical = Jsoup.connect(LINK_CHANNEL_ID + channelId + "/live").get().body()
                     .getElementsByAttributeValue("rel", "canonical").first().attributes().get("href");
             if (!canonical.contains("watch?")) return null;
-            return new YTStream(channelId, canonical);
+            final YTStream stream = new YTStream(channelId, canonical);
+            final List<Video> snippet = api.videos().list("snippet").setId(stream.getVideoID()).execute().getItems();
+            if (snippet.size() < 1) return null;
+            if (snippet.get(0).getSnippet().getLiveBroadcastContent().equals("live")) return null;
+            return stream;
         } catch (Throwable ignored) {
             return null;
         }
@@ -107,7 +112,8 @@ public class Streams {
                 return new Pair<>(getYTName(identifier), getYTChannelLink(identifier));
             case "ttv":
                 return new Pair<>(getTTVName(identifier), getTTVChannelLink(identifier));
-            default: throw new IllegalArgumentException("Unknown type");
+            default:
+                throw new IllegalArgumentException("Unknown type");
         }
     }
 
