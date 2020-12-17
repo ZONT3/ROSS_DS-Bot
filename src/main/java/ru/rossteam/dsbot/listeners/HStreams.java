@@ -3,8 +3,11 @@ package ru.rossteam.dsbot.listeners;
 import com.github.twitch4j.helix.domain.Stream;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
-import ru.rossteam.dsbot.tools.Configs;
-import ru.rossteam.dsbot.tools.Messages;
+import ru.rossteam.dsbot.tools.Commons;
+import ru.rossteam.dsbot.tools.messages.Streams;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.handler.LStatusHandler;
+import ru.zont.dsbot.core.tools.Messages;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -17,6 +20,10 @@ import static ru.rossteam.dsbot.tools.Streams.*;
 public class HStreams extends LStatusHandler {
 
     private static final Set<String> committed = Collections.synchronizedSet(new HashSet<>());
+
+    public HStreams(ZDSBot bot) {
+        super(bot);
+    }
 
     @Override
     public void prepare(ReadyEvent event) {
@@ -45,25 +52,25 @@ public class HStreams extends LStatusHandler {
     }
 
     private void commitTTVStream(Stream stream) {
-        MessageChannel channel = tryFindTChannel(Configs.getStreamsChannelID());
+        MessageChannel channel = tryFindTChannel(Commons.getStreamsChannelID());
 
         final String id = stream.getId();
         committed.add(id);
-        channel.sendMessage(Messages.Streams.newTTVStream(stream)).queue(null, t -> {
+        channel.sendMessage(Streams.newTTVStream(stream)).queue(null, t -> {
             Messages.tryPrintError("Cannot commit a new stream notation",
-                    Messages.describeException(t));
+                    Messages.describeException(t), getJda());
             committed.remove(id);
         });
     }
 
     private void commitYTStream(YTStream result) {
-        MessageChannel channel = tryFindTChannel(Configs.getStreamsChannelID());
+        MessageChannel channel = tryFindTChannel(Commons.getStreamsChannelID());
 
         String link = result.getChannelID();
         committed.add(link);
-        channel.sendMessage(Messages.Streams.newYTStream(result)).queue(null, throwable -> {
+        channel.sendMessage(Streams.newYTStream(result)).queue(null, throwable -> {
             Messages.tryPrintError("Cannot commit a new stream notation",
-                    Messages.describeException(throwable));
+                    Messages.describeException(throwable), getJda());
             committed.remove(link);
         });
     }

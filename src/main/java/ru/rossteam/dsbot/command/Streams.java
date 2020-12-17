@@ -6,21 +6,24 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import ru.rossteam.dsbot.DescribedException;
-import ru.rossteam.dsbot.tools.Commands;
-import ru.rossteam.dsbot.tools.Messages;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.commands.DescribedException;
+import ru.zont.dsbot.core.tools.Messages;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Properties;
 
 import static ru.rossteam.dsbot.tools.Streams.*;
-import static ru.rossteam.dsbot.tools.Strings.STR;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Streams extends CommandAdapter {
+
+    public Streams(ZDSBot bot) throws RegisterException {
+        super(bot);
+    }
 
     @Override
     public void onRequest(@NotNull MessageReceivedEvent event) throws UserInvalidArgumentException {

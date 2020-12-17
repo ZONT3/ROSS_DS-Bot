@@ -9,12 +9,15 @@ import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Commons;
-import ru.rossteam.dsbot.tools.Configs;
 import ru.rossteam.dsbot.tools.Globals;
-import ru.rossteam.dsbot.tools.Strings;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.handler.LStatusHandler;
+import ru.zont.dsbot.core.tools.Tools;
 
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static ru.zont.dsbot.core.tools.Strings.*;
 
 public class HClientsTS extends LStatusHandler {
     public static final String DS_BOT_NAME = "DS Bot";
@@ -23,6 +26,10 @@ public class HClientsTS extends LStatusHandler {
     private boolean loginSuccess = false;
 
     int lastCount = Integer.MIN_VALUE;
+
+    public HClientsTS(ZDSBot bot) {
+        super(bot);
+    }
 
     @Override
     public void prepare(ReadyEvent event) {
@@ -41,12 +48,12 @@ public class HClientsTS extends LStatusHandler {
 
     @Override
     public void update() {
-        GuildChannel channel = tryFindChannel(Configs.getTSCountChannelID());
+        GuildChannel channel = Tools.tryFindChannel(Commons.getTSOnlineChannel(), getJda());
 
         int count = getClientCount();
         if (count == lastCount) return;
 
-        channel.getManager().setName(String.format(Strings.STR.getString("shandler.ts_clients"), count))
+        channel.getManager().setName(String.format(STR.getString("shandler.ts_clients"), count))
                 .complete();
         lastCount = count;
     }

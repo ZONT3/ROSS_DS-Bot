@@ -4,19 +4,23 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.Globals;
-import ru.rossteam.dsbot.tools.Commands;
-import ru.rossteam.dsbot.tools.Configs;
-import ru.rossteam.dsbot.tools.Messages;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.tools.Configs;
+import ru.zont.dsbot.core.tools.Messages;
 
 import java.awt.*;
 import java.util.Map;
 import java.util.Properties;
 
-import static ru.rossteam.dsbot.tools.Strings.STR;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Help extends CommandAdapter {
-    public Help() throws RegisterException {
-        super();
+
+
+    public Help(ZDSBot bot) throws RegisterException {
+        super(bot);
     }
 
     @Override
@@ -34,14 +38,14 @@ public class Help extends CommandAdapter {
         String inpt = Commands.parseRaw(this, event);
         CommandAdapter comm = null;
         boolean b = !inpt.isEmpty();
-        if (b) comm = Commands.forName(inpt);
+        if (b) comm = Commands.forName(inpt, getBot());
         if (comm == null) {
             if (b) Messages.printError(event.getChannel(), STR.getString("comm.help.err.unknown.title"), STR.getString("comm.help.err.unknown"));
 
             EmbedBuilder builder = new EmbedBuilder()
                     .setTitle(STR.getString("comm.help.list.title"))
                     .setColor(Color.LIGHT_GRAY);
-            for (Map.Entry<String, CommandAdapter> e: Commands.getAllCommands().entrySet()) {
+            for (Map.Entry<String, CommandAdapter> e: Commands.getAllCommands(getBot()).entrySet()) {
                 CommandAdapter command = e.getValue();
                 if (command.isHidden()) continue;
                 builder.addField(

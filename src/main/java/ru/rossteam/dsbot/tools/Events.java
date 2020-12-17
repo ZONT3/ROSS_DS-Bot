@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.zont.dsbot.core.tools.Tools;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -24,12 +25,12 @@ public class Events {
     private static final File committedFile = new File(Globals.DIR_DB, "events");
 
     public static void commitEventSet(HashSet<String> s) {
-        Commons.commitObject(committedFile, s);
+        Tools.commitObject(committedFile, s);
     }
 
     @SuppressWarnings("unchecked")
     public static HashSet<String> retrieveCommitted() {
-        HashSet<String> o = (HashSet<String>) Commons.retrieveObject(committedFile);
+        HashSet<String> o = (HashSet<String>) Tools.retrieveObject(committedFile);
         if (o == null) o = new HashSet<>();
         return o;
     }

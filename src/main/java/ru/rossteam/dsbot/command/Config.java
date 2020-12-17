@@ -6,10 +6,12 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import ru.rossteam.dsbot.tools.LOG;
-import ru.rossteam.dsbot.tools.Commands;
-import ru.rossteam.dsbot.tools.Configs;
-import ru.rossteam.dsbot.tools.Messages;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.tools.Configs;
+import ru.zont.dsbot.core.tools.LOG;
+import ru.zont.dsbot.core.tools.Messages;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -17,11 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import static ru.rossteam.dsbot.tools.Strings.STR;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Config extends CommandAdapter {
-    public Config() throws RegisterException {
-        super();
+
+    public Config(ZDSBot bot) throws RegisterException {
+        super(bot);
     }
 
     @Override
@@ -58,14 +61,14 @@ public class Config extends CommandAdapter {
                     parseProps(Configs.getGlobalProps()),
                     false );
 
-            HashMap<String, CommandAdapter> comms = Commands.getAllCommands();
+            HashMap<String, CommandAdapter> comms = Commands.getAllCommands(getBot());
             for (Map.Entry<String, CommandAdapter> entry: comms.entrySet())
                 if (entry.getValue().getProps().size() > 0)
                     builder.addField( entry.getKey(), parseProps(entry.getValue().getProps()), false );
 
             return builder.build();
         } else if (args.length == 2) {
-            CommandAdapter comm = Commands.forName(args[1]);
+            CommandAdapter comm = Commands.forName(args[1], getBot());
             if (comm == null && !args[1].toLowerCase().equals("global"))
                 throwUnknownComm(args[1]);
 
@@ -77,7 +80,7 @@ public class Config extends CommandAdapter {
             builder.setDescription(parseProps(props));
             return builder.build();
         } else if (args.length >= 3) {
-            CommandAdapter comm = Commands.forName(args[1]);
+            CommandAdapter comm = Commands.forName(args[1], getBot());
             if (comm == null && !args[1].toLowerCase().equals("global"))
                 throwUnknownComm(args[1]);
 
@@ -113,7 +116,7 @@ public class Config extends CommandAdapter {
             props.setProperty(key, value);
             Configs.storeGlobalProps(props);
         } else {
-            CommandAdapter comm = Commands.forName(command);
+            CommandAdapter comm = Commands.forName(command, getBot());
             if (comm == null)
                 throwUnknownComm(command);
 

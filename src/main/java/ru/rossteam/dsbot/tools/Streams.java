@@ -15,6 +15,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.zont.dsbot.core.tools.Tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,12 +94,12 @@ public class Streams {
 
     @SuppressWarnings({"unchecked"})
     public static HashSet<String> retrieveWatchingList() {
-        final Object o = Commons.retrieveObject(watchlistFile);
+        final Object o = Tools.retrieveObject(watchlistFile);
         return o != null ? (HashSet<String>) o : new HashSet<>();
     }
 
     private static void commitWL(HashSet<String> set) {
-        Commons.commitObject(watchlistFile, set);
+        Tools.commitObject(watchlistFile, set);
     }
 
     public static Pair<String, String> wlStatementToLink(String statement) {

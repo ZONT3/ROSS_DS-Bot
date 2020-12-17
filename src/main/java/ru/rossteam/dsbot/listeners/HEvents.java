@@ -4,8 +4,9 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import ru.rossteam.dsbot.tools.Commons;
-import ru.rossteam.dsbot.tools.Configs;
-import ru.rossteam.dsbot.tools.Messages;
+import ru.rossteam.dsbot.tools.messages.Site;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.handler.LStatusHandler;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -15,6 +16,10 @@ import java.util.HashSet;
 import static ru.rossteam.dsbot.tools.Events.*;
 
 public class HEvents extends LStatusHandler {
+
+    public HEvents(ZDSBot bot) {
+        super(bot);
+    }
 
     @Override
     public void prepare(ReadyEvent event) {
@@ -37,7 +42,7 @@ public class HEvents extends LStatusHandler {
     }
 
     private void reportEvent(String sign, HashSet<String> set, Message embed) {
-        final MessageChannel channel = tryFindTChannel(Configs.getEventsChannelID());
+        final MessageChannel channel = tryFindTChannel(Commons.getEventsChannelID());
 
         synchronized (set) {
             set.add(sign);
@@ -53,11 +58,11 @@ public class HEvents extends LStatusHandler {
     }
 
     private void reportCurrEvent(Event event, HashSet<String> set) {
-        reportEvent("C:" + event.getLink(), set, Messages.Site.notifyEvent(event));
+        reportEvent("C:" + event.getLink(), set, Site.notifyEvent(event));
     }
 
     private void reportNewEvent(Event event, HashSet<String> set) {
-        reportEvent(event.getLink(), set, Messages.Site.newEvent(event));
+        reportEvent(event.getLink(), set, Site.newEvent(event));
     }
 
     @Override

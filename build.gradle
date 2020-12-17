@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ru.rossteam'
-version '1.0'
+version '1.1'
 
 repositories {
     mavenCentral()
@@ -13,6 +13,7 @@ repositories {
 dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    compile project(':core')
     implementation 'net.dv8tion:JDA:4.2.0_209'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'org.reflections:reflections:0.9.12'

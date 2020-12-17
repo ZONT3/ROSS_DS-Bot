@@ -4,14 +4,18 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.commands.CommandAdapter;
 
 import java.util.Properties;
 
-import static ru.rossteam.dsbot.tools.Strings.STR;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Ping extends CommandAdapter {
-    public Ping() throws RegisterException {
-        super();
+
+
+    public Ping(ZDSBot bot) throws RegisterException {
+        super(bot);
     }
 
     @Override

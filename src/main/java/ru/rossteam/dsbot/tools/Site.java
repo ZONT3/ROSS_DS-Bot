@@ -2,6 +2,7 @@ package ru.rossteam.dsbot.tools;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
+import ru.zont.dsbot.core.tools.Tools;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,12 +20,12 @@ public class Site {
 
     @SuppressWarnings("unchecked")
     public static HashSet<String> retrieveCommittedSet() {
-        final Object o = Commons.retrieveObject(committedSetFile);
+        final Object o = Tools.retrieveObject(committedSetFile);
         return o != null ? (HashSet<String>) o : new HashSet<>();
     }
 
     public static void commitSet(HashSet<String> set) {
-        Commons.commitObject(committedSetFile, set);
+        Tools.commitObject(committedSetFile, set);
     }
 
     public static ArrayList<NewsEntry> parseNews() throws IOException {
