@@ -19,6 +19,7 @@ public class Main extends ListenerAdapter {
             setProperty("channel_streams", "0");
             setProperty("channel_news", "0");
             setProperty("channel_events", "0");
+            setProperty("channel_ts", "0");
             setProperty("message_checkpoint", "0");
             setProperty("role_checked", "0");
             setProperty("TA_IDS", "331524458806247426");

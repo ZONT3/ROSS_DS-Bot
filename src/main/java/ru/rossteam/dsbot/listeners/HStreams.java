@@ -77,6 +77,6 @@ public class HStreams extends LStatusHandler {
 
     @Override
     public long getPeriod() {
-        return 120000;
+        return 2 * 60 * 1000;
     }
 }

@@ -4,7 +4,11 @@ import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildChannel;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.ShutdownEvent;
 import org.jetbrains.annotations.NotNull;
@@ -14,16 +18,22 @@ import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.handler.LStatusHandler;
 import ru.zont.dsbot.core.tools.Tools;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static ru.zont.dsbot.core.tools.Strings.*;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class HClientsTS extends LStatusHandler {
     public static final String DS_BOT_NAME = "DS Bot";
     private TS3Api api;
     private TS3Query query;
     private boolean loginSuccess = false;
+
+    private Message tsStatus;
 
     int lastCount = Integer.MIN_VALUE;
 
@@ -44,10 +54,36 @@ public class HClientsTS extends LStatusHandler {
         api.login(Globals.tsq_login, Globals.tsq_pass);
         api.selectVirtualServerById(1, DS_BOT_NAME);
         loginSuccess = true;
+
+        prepareMessage();
+    }
+
+    private void prepareMessage() {
+        final TextChannel channel = Tools.tryFindTChannel(Commons.getTSChannelID(), getJda());
+        for (Message message: channel.getHistory().retrievePast(50).complete()) {
+            final List<MessageEmbed> embeds = message.getEmbeds();
+            if (embeds.size() < 1) continue;
+            final String title = embeds.get(0).getTitle();
+            if (title != null && title.equals(STR.getString("shandler.ts_status.title")))
+                tsStatus = message;
+        }
+        if (tsStatus != null) return;
+
+        tsStatus = channel.sendMessage(
+                new EmbedBuilder()
+                .setTitle(STR.getString("shandler.ts_status.title"))
+                .build()).complete();
     }
 
     @Override
     public void update() {
+        try { updClients(); }
+        catch (Exception e) { e.printStackTrace(); }
+        try { updTSStatus(); }
+        catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void updClients() {
         GuildChannel channel = Tools.tryFindChannel(Commons.getTSOnlineChannel(), getJda());
 
         int count = getClientCount();
@@ -56,6 +92,30 @@ public class HClientsTS extends LStatusHandler {
         channel.getManager().setName(String.format(STR.getString("shandler.ts_clients"), count))
                 .complete();
         lastCount = count;
+    }
+
+    private void updTSStatus() {
+        HashMap<Integer, ArrayList<Client>> channels = new HashMap<>();
+        for (Client client: api.getClients()) {
+            if (client.isServerQueryClient()) continue;
+            final ArrayList<Client> list = channels.getOrDefault(client.getChannelId(), new ArrayList<>());
+            list.add(client);
+            channels.put(client.getChannelId(), list);
+        }
+
+        final EmbedBuilder builder = new EmbedBuilder()
+                .setColor(0x666666)
+                .setFooter(STR.getString("shandler.ts_status.footer"), "https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/teamspeak-3-icon.png")
+                .setTitle(STR.getString("shandler.ts_status.title"));
+        if (channels.isEmpty()) builder.setDescription(STR.getString("shandler.ts_status.no_one"));
+        for (Entry<Integer, ArrayList<Client>> e: channels.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            for (Client client: e.getValue())
+                sb.append(client.getNickname()).append('\n');
+            builder.addField(api.getChannelInfo(e.getKey()).getName(), sb.toString(), false);
+        }
+
+        tsStatus.editMessage(builder.build()).queue();
     }
 
     private int getClientCount() {
@@ -76,6 +136,6 @@ public class HClientsTS extends LStatusHandler {
 
     @Override
     public long getPeriod() {
-        return 60000;
+        return 60 * 1000;
     }
 }

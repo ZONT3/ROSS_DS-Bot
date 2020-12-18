@@ -11,6 +11,9 @@ public class Commons {
     public static String getStreamsChannelID() {
         return getID("channel_streams");
     }
+    public static String getTSChannelID() {
+        return getID("channel_ts");
+    }
     public static String getEventsChannelID() {
         return getID("channel_events");
     }

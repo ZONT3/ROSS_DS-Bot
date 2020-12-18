@@ -50,6 +50,6 @@ public class HNews extends LStatusHandler {
 
     @Override
     public long getPeriod() {
-        return 600000;
+        return 10 * 60 * 1000;
     }
 }
