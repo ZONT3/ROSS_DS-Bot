@@ -23,4 +23,12 @@ public class Commons {
     public static String getTSOnlineChannel() {
         return getID("channel_ts_online");
     }
+
+    public static String getCheckpointMessageID() {
+        return getID("message_checkpoint");
+    }
+
+    public static String getCheckedRoleID() {
+        return getID("role_checked");
+    }
 }

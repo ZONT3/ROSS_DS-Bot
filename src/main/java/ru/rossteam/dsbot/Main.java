@@ -1,6 +1,7 @@
 package ru.rossteam.dsbot;
 
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.GatewayIntent;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.tools.Configs;
@@ -18,6 +19,8 @@ public class Main extends ListenerAdapter {
             setProperty("channel_streams", "0");
             setProperty("channel_news", "0");
             setProperty("channel_events", "0");
+            setProperty("message_checkpoint", "0");
+            setProperty("role_checked", "0");
             setProperty("TA_IDS", "331524458806247426");
         }});
         Configs.writeDefaultGlobalProps();
@@ -26,6 +29,7 @@ public class Main extends ListenerAdapter {
 
         ZDSBot bot = new ZDSBot(args[0], "1.1",
                 "ru.rossteam.dsbot.command", "ru.rossteam.dsbot.listeners");
+        bot.getJdaBuilder().enableIntents(GatewayIntent.GUILD_MESSAGE_REACTIONS);
         bot.create().awaitReady();
     }
 
