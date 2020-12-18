@@ -2,6 +2,8 @@ package ru.rossteam.dsbot.command;
 
 import javafx.util.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import ru.rossteam.dsbot.tools.TV;
@@ -12,6 +14,7 @@ import ru.zont.dsbot.core.tools.Messages;
 import ru.zont.dsbot.core.tools.Tools;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Properties;
 
 import static ru.zont.dsbot.core.tools.Strings.STR;
@@ -93,5 +96,18 @@ public class Videos extends CommandAdapter {
     @Override
     protected Properties getPropsDefaults() {
         return null;
+    }
+
+    @Override
+    public boolean checkPermission(MessageReceivedEvent event) {
+        Commands.Input input = Commands.parseInput(this, event);
+        boolean b = false;
+        for (String comm: Arrays.asList("add", "rm"))
+            b = b || comm.equalsIgnoreCase(input.getArg(0));
+        if (b) {
+            Member member = event.getMember();
+            if (member == null) return false;
+            return member.hasPermission(Permission.ADMINISTRATOR);
+        } else return true;
     }
 }

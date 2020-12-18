@@ -7,6 +7,7 @@ import com.google.api.services.youtube.model.SearchResultSnippet;
 import com.google.api.services.youtube.model.VideoSnippet;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import ru.rossteam.dsbot.tools.TV;
 import ru.zont.dsbot.core.tools.Messages;
 
@@ -46,7 +47,7 @@ public class Streams {
         }
     }
 
-    public static Message newYTVideo(SearchResult result) {
+    public static MessageEmbed newYTVideo(SearchResult result) {
         try {
             final String videoID = result.getId().getVideoId();
             final String channelID = result.getSnippet().getChannelId();
@@ -61,7 +62,7 @@ public class Streams {
             final String channelLink = getYTChannelLink(channelID);
             final String ytThumbnail = channel.getThumbnails().getDefault().getUrl();
 
-            return Messages.pushEveryone(new EmbedBuilder()
+            return new EmbedBuilder()
                     .setAuthor(channelTitle, channelLink, ytThumbnail)
                     .setTitle(STR.getString("shandler.videos.new.title"), ytLink)
                     .setDescription(String.format(STR.getString("shandler.videos.new.desc"),
@@ -69,7 +70,7 @@ public class Streams {
                     .setThumbnail(ICON_YT)
                     .setImage(thumb)
                     .setColor(0xFF0000)
-                    .build());
+                    .build();
 
         } catch (Throwable e) {
             throw new RuntimeException("Error in getting info", e);
