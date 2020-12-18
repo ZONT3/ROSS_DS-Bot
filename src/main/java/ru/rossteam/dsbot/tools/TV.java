@@ -1,6 +1,5 @@
 package ru.rossteam.dsbot.tools;
 
-import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.TwitchHelixBuilder;
 import com.github.twitch4j.helix.domain.User;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
@@ -15,6 +14,10 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.commands.Commands;
+import ru.zont.dsbot.core.commands.DescribedException;
+import ru.zont.dsbot.core.tools.Messages;
 import ru.zont.dsbot.core.tools.Tools;
 
 import java.io.File;
@@ -29,7 +32,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Streams {
+import static ru.zont.dsbot.core.tools.Strings.STR;
+
+public class TV {
     public static final String REGEX_CHANNEL_ID = "[\\w-]+";
     public static final String LINK_CHANNEL_ID = "https://www.youtube.com/channel/";
     public static final String LINK_CHANNEL_NAME = "https://www.youtube.com/c/";
@@ -38,12 +43,10 @@ public class Streams {
     public static final String ICON_TTV = "https://assets.help.twitch.tv/Glitch_Purple_RGB.png";
 
     private static final File watchlistFile = new File(Globals.DIR_DB, "watchlist.bin");
-
-    public static YouTube api;
-    public static TwitchHelix helix;
+    public static File ytWatchlist = new File(Globals.DIR_DB, "wl_videos.bin");
 
     public static void setupYouTube() throws GeneralSecurityException, IOException {
-        api = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null).setApplicationName("ross-ds-bot").build();
+        Globals.api = new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null).setApplicationName("ross-ds-bot").build();
     }
 
     public static String getYTChannelID(String link) throws IOException {
@@ -83,7 +86,7 @@ public class Streams {
                     .getElementsByAttributeValue("rel", "canonical").first().attributes().get("href");
             if (!canonical.contains("watch?")) return null;
             final YTStream stream = new YTStream(channelId, canonical);
-            final List<Video> snippet = api.videos().list("snippet").setId(stream.getVideoID()).execute().getItems();
+            final List<Video> snippet = Globals.api.videos().list("snippet").setId(stream.getVideoID()).execute().getItems();
             if (snippet.size() < 1) return null;
             if (snippet.get(0).getSnippet().getLiveBroadcastContent().equals("live")) return null;
             return stream;
@@ -137,16 +140,16 @@ public class Streams {
     }
 
     private static List<User> getUsersSnippet(String username) {
-        if (helix == null) throw new NullPointerException("API instance");
-        return helix.getUsers(null, null, Collections.singletonList(username)).execute().getUsers();
+        if (Globals.helix == null) throw new NullPointerException("API instance");
+        return Globals.helix.getUsers(null, null, Collections.singletonList(username)).execute().getUsers();
     }
 
     public static List<Channel> getChannelSnippet(String id) {
-        if (api == null) throw new NullPointerException("API instance");
+        if (Globals.api == null) throw new NullPointerException("API instance");
 
         final List<Channel> snippet;
         try {
-            snippet = api.channels().list("snippet")
+            snippet = Globals.api.channels().list("snippet")
                     .setKey(Globals.GOOGLE_API)
                     .setId(id)
                     .execute().getItems();
@@ -158,11 +161,11 @@ public class Streams {
     }
 
     public static List<Video> getVideoSnippet(String id) {
-        if (api == null) throw new NullPointerException("API instance");
+        if (Globals.api == null) throw new NullPointerException("API instance");
 
         final List<Video> snippet;
         try {
-            snippet = api.videos().list("snippet")
+            snippet = Globals.api.videos().list("snippet")
                     .setKey(Globals.GOOGLE_API)
                     .setId(id)
                     .execute().getItems();
@@ -173,13 +176,13 @@ public class Streams {
         return snippet;
     }
 
-    public static void addToWatchingList(String link) {
+    public static void addToWatchingStreamsList(String link) {
         HashSet<String> set = retrieveWatchingList();
         set.add(link);
         commitWL(set);
     }
 
-    public static void removeFromWatchingList(String res) {
+    public static void removeFromWatchingStreamsList(String res) {
         HashSet<String> set = retrieveWatchingList();
         set.removeIf(s -> s.equalsIgnoreCase(res));
         commitWL(set);
@@ -199,16 +202,16 @@ public class Streams {
     }
 
     public static void setupTwitch() {
-        helix = TwitchHelixBuilder.builder()
+        Globals.helix = TwitchHelixBuilder.builder()
                 .withClientId(Globals.TWITCH_API_CLIENT_ID)
                 .withClientSecret(Globals.TWITCH_API_SECRET)
                 .build();
     }
 
     public static List<com.github.twitch4j.helix.domain.Stream> getTTVStreams(String userid) {
-        if (helix == null) throw new NullPointerException("API instance");
+        if (Globals.helix == null) throw new NullPointerException("API instance");
 
-        return helix.getStreams(null, null, null,
+        return Globals.helix.getStreams(null, null, null,
                 null, null, null, null,
                 Collections.singletonList(userid))
                 .execute().getStreams();
@@ -220,6 +223,42 @@ public class Streams {
         if (matcher.find()) return matcher.group(1);
         else if (link.matches(REGEX_CHANNEL_ID)) return link;
         else throw new IOException("Cannot parse twitch userid");
+    }
+
+    @NotNull
+    public static String getChannelReference(String reference) {
+        String channel;
+        String service = "yt:";
+        try {
+            channel = getYTChannelID(reference);
+        } catch (Exception e) {
+            try {
+                service = "ttv:";
+                channel = getTwitchChannel(reference);
+            } catch (Throwable ee) {
+                e.printStackTrace();
+                ee.printStackTrace();
+                throw new DescribedException(
+                        STR.getString("comm.streams.err.add.title"),
+                        String.format(STR.getString("comm.streams.err.add"),
+                                Messages.describeException(e)));
+            }
+        }
+        return service + channel;
+    }
+
+    public static String getValidReference(Commands.Input input) {
+        ArrayList<String> args = input.getArgs();
+        if (args.size() < 2) throw new CommandAdapter.UserInvalidArgumentException(STR.getString("err.insufficient_args"));
+        final String reference = args.get(1);
+
+        return getChannelReference(reference);
+    }
+
+    public static ArrayList<String> retrieveYTWatchingList() {
+        ArrayList<String> wl = (ArrayList<String>) Tools.retrieveObject(ytWatchlist);
+        if (wl == null) return new ArrayList<>();
+        return wl;
     }
 
     public static class YTStream {

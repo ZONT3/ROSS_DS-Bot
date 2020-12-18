@@ -104,7 +104,7 @@ public class HClientsTS extends LStatusHandler {
         }
 
         final EmbedBuilder builder = new EmbedBuilder()
-                .setColor(0x666666)
+                .setColor(0x00c8ff)
                 .setFooter(STR.getString("shandler.ts_status.footer"), "https://icons.iconarchive.com/icons/papirus-team/papirus-apps/256/teamspeak-3-icon.png")
                 .setTitle(STR.getString("shandler.ts_status.title"));
         if (channels.isEmpty()) builder.setDescription(STR.getString("shandler.ts_status.no_one"));

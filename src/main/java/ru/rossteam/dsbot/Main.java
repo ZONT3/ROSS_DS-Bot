@@ -9,9 +9,12 @@ import ru.zont.dsbot.core.tools.Configs;
 import javax.security.auth.login.LoginException;
 import java.util.Properties;
 
+import static ru.rossteam.dsbot.tools.TV.setupTwitch;
+import static ru.rossteam.dsbot.tools.TV.setupYouTube;
+
 public class Main extends ListenerAdapter {
 
-    public static void main(String[] args) throws LoginException, InterruptedException, IllegalArgumentException {
+    public static void main(String[] args) throws Exception {
         Configs.setGlobalPropsDefaults(new Properties(){{
             setProperty("command_prefix", "r.");
             setProperty("channel_ts_online", "0");
@@ -27,6 +30,9 @@ public class Main extends ListenerAdapter {
         Configs.writeDefaultGlobalProps();
 
         handleArguments(args);
+
+        setupYouTube();
+        setupTwitch();
 
         ZDSBot bot = new ZDSBot(args[0], "1.1",
                 "ru.rossteam.dsbot.command", "ru.rossteam.dsbot.listeners");

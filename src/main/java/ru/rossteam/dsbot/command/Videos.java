@@ -2,25 +2,23 @@ package ru.rossteam.dsbot.command;
 
 import javafx.util.Pair;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.rossteam.dsbot.tools.TV;
 import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.commands.CommandAdapter;
 import ru.zont.dsbot.core.commands.Commands;
 import ru.zont.dsbot.core.tools.Messages;
+import ru.zont.dsbot.core.tools.Tools;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Properties;
 
-import static ru.rossteam.dsbot.tools.TV.*;
 import static ru.zont.dsbot.core.tools.Strings.STR;
 
-public class Streams extends CommandAdapter {
+public class Videos extends CommandAdapter {
 
-    public Streams(ZDSBot bot) throws RegisterException {
+    public Videos(ZDSBot bot) throws RegisterException {
         super(bot);
     }
 
@@ -35,10 +33,10 @@ public class Streams extends CommandAdapter {
             case "list":
             case "get":
                 StringBuilder builder = new StringBuilder();
-                for (String channel: retrieveWatchingList())
+                for (String channel: TV.retrieveYTWatchingList())
                     builder.append("• ").append(getChannel(channel)).append('\n');
                 event.getChannel().sendMessage(new EmbedBuilder()
-                        .setTitle(STR.getString("comm.streams.list.title"))
+                        .setTitle(STR.getString("comm.videos.list.title"))
                         .setDescription(builder)
                         .build()).queue();
                 break;
@@ -55,54 +53,45 @@ public class Streams extends CommandAdapter {
         }
     }
 
+    private static synchronized void removeWatch(Commands.Input input) {
+        final ArrayList<String> wl = TV.retrieveYTWatchingList();
+        wl.remove(TV.getValidReference(input));
+        Tools.commitObject(TV.ytWatchlist, wl);
+    }
+
+    private static synchronized void addWatch(Commands.Input input) {
+        final ArrayList<String> wl = TV.retrieveYTWatchingList();
+        final String ref = TV.getValidReference(input);
+        if (ref.startsWith("ttv:")) throw new UserInvalidArgumentException("Twitch is not supported");
+        wl.add(ref);
+        Tools.commitObject(TV.ytWatchlist, wl);
+    }
+
     private String getChannel(String channel) {
-        final Pair<String, String> st = wlStatementToLink(channel);
-        return String.format("[%s](%s)", st.getKey(), st.getValue());
-    }
-
-    private synchronized void removeWatch(Commands.Input input) {
-        String res = getValidReference(input);
-        removeFromWatchingStreamsList(res);
-    }
-
-    private synchronized void addWatch(Commands.Input input) {
-        String res = getValidReference(input);
-        addToWatchingStreamsList(res);
+        final Pair<String, String> s = TV.wlStatementToLink(channel);
+        return String.format("[%s](%s)", s.getKey(), s.getValue());
     }
 
     @Override
     public String getCommandName() {
-        return "streams";
+        return "yt";
     }
 
     @Override
     public String getSynopsis() {
-        return "streams get|list|add|rm ...\n" +
-                "streams get|list\n" +
-                "streams add <link>|<channelID>|<username>\n" +
-                "streams rm <link>|<channelID>|<username>";
+        return "yt get|list|add|rm ...\n" +
+                "yt get|list\n" +
+                "yt add <link>|<channelID>|<username>\n" +
+                "yt rm <link>|<channelID>|<username>";
     }
 
     @Override
     public String getDescription() {
-        return STR.getString("comm.streams.desc");
+        return STR.getString("comm.videos.desc");
     }
 
     @Override
     protected Properties getPropsDefaults() {
         return null;
-    }
-
-    @Override
-    public boolean checkPermission(MessageReceivedEvent event) {
-        Commands.Input input = Commands.parseInput(this, event);
-        boolean b = false;
-        for (String comm: Arrays.asList("add", "rm"))
-            b = b || comm.equalsIgnoreCase(input.getArg(0));
-        if (b) {
-            Member member = event.getMember();
-            if (member == null) return false;
-            return member.hasPermission(Permission.ADMINISTRATOR);
-        } else return true;
     }
 }

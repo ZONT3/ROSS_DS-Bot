@@ -6,7 +6,7 @@ import static ru.zont.dsbot.core.tools.Configs.getID;
 
 public class Commons {
 
-    public static final LocalDate DONT_POST_BEFORE = LocalDate.of(2020, 12, 10);
+    public static final LocalDate DONT_POST_BEFORE = LocalDate.of(2020, 12, 18);
 
     public static String getStreamsChannelID() {
         return getID("channel_streams");
@@ -34,4 +34,5 @@ public class Commons {
     public static String getCheckedRoleID() {
         return getID("role_checked");
     }
+
 }

@@ -9,13 +9,11 @@ import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.handler.LStatusHandler;
 import ru.zont.dsbot.core.tools.Messages;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static ru.rossteam.dsbot.tools.Streams.*;
+import static ru.rossteam.dsbot.tools.TV.*;
 
 public class HStreams extends LStatusHandler {
 
@@ -26,14 +24,7 @@ public class HStreams extends LStatusHandler {
     }
 
     @Override
-    public void prepare(ReadyEvent event) {
-        try {
-            setupYouTube();
-            setupTwitch();
-        } catch (GeneralSecurityException | IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+    public void prepare(ReadyEvent event) { }
 
     @Override
     public void update() throws Exception {
