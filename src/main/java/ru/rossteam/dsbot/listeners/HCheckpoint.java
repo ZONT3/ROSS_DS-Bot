@@ -1,13 +1,12 @@
 package ru.rossteam.dsbot.listeners;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.ReadyEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.api.events.message.guild.react.GuildMessageReactionRemoveEvent;
 import org.jetbrains.annotations.NotNull;
+import ru.rossteam.dsbot.tools.Commons;
 import ru.zont.dsbot.core.ZDSBot;
 import ru.zont.dsbot.core.handler.LStatusHandler;
 import ru.zont.dsbot.core.tools.Messages;
@@ -15,6 +14,7 @@ import ru.zont.dsbot.core.tools.Tools;
 
 import static ru.rossteam.dsbot.tools.Commons.getCheckedRoleID;
 import static ru.rossteam.dsbot.tools.Commons.getCheckpointMessageID;
+import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class HCheckpoint extends LStatusHandler {
 
@@ -48,6 +48,22 @@ public class HCheckpoint extends LStatusHandler {
         if (!event.getMessageId().equals(checkpointID)) return;
         if (!event.getReactionEmote().getEmoji().equals(Messages.EMOJI_OK)) return;
         rmRole(event.getGuild(), event.getMember());
+    }
+
+    @Override
+    public void onGuildMemberJoin(@NotNull GuildMemberJoinEvent event) {
+        final String checkpointChannelID = Commons.getCheckpointChannelID();
+        final TextChannel channel = Tools.tryFindTChannel(checkpointChannelID, getJda());
+        final String checkpointMessageID = Commons.getCheckpointMessageID();
+        final TextChannel bureau = Tools.tryFindMessage(checkpointMessageID, getJda()).getTextChannel();
+        if (channel.getGuild().getIdLong() != event.getGuild().getIdLong()) return;
+
+        final String memberMention = event.getUser().getAsMention();
+        final String bureauMention = bureau.getAsMention();
+        channel.sendMessage(String.format(STR.getString("shandler.checkpoint.greetings"), memberMention)).queue();
+        event.getUser().openPrivateChannel().complete()
+                .sendMessage(String.format(STR.getString("shandler.checkpoint.greetings.pm"),
+                        memberMention, bureauMention)).queue();
     }
 
     private synchronized void addRole(Guild guild, Member member) {

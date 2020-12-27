@@ -77,10 +77,19 @@ public class HClientsTS extends LStatusHandler {
 
     @Override
     public void update() {
+        checkConnection();
         try { updClients(); }
         catch (Exception e) { e.printStackTrace(); }
         try { updTSStatus(); }
         catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void checkConnection() {
+        // TODO
+//        try { api.getClients(); }
+//        catch () {
+//
+//        }
     }
 
     private void updClients() {

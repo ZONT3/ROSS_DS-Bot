@@ -23,6 +23,9 @@ public class Commons {
     public static String getLogChannelID() {
         return getID("channel_log");
     }
+    public static String getCheckpointChannelID() {
+        return getID("channel_checkpoint");
+    }
     public static String getTSOnlineChannel() {
         return getID("channel_ts_online");
     }
