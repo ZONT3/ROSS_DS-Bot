@@ -4,7 +4,7 @@ import com.github.twitch4j.helix.TwitchHelix;
 import com.google.api.services.youtube.YouTube;
 
 public class Globals {
-    public static final String version = "1.2";
+    public static final String version = "1.2.2";
     public static final String DIR_DB = "db";
 
     public static String GOOGLE_API;

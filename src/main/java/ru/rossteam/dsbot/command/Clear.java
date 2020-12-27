@@ -67,7 +67,7 @@ public class Clear extends CommandAdapter {
 
     @Override
     public String getDescription() {
-        return "";
+        return STR.getString("comm.clear.desc");
     }
 
     @Override
