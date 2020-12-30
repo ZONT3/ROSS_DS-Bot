@@ -3,6 +3,7 @@ package ru.rossteam.dsbot.listeners;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.TS3Config;
 import com.github.theholywaffle.teamspeak3.TS3Query;
+import com.github.theholywaffle.teamspeak3.api.exception.TS3QueryShutDownException;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Client;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.GuildChannel;
@@ -36,6 +37,7 @@ public class HClientsTS extends LStatusHandler {
     private Message tsStatus;
 
     int lastCount = Integer.MIN_VALUE;
+    private List<Client> clients;
 
     public HClientsTS(ZDSBot bot) {
         super(bot);
@@ -77,19 +79,19 @@ public class HClientsTS extends LStatusHandler {
 
     @Override
     public void update() {
-        checkConnection();
+        fetchClients();
         try { updClients(); }
         catch (Exception e) { e.printStackTrace(); }
         try { updTSStatus(); }
         catch (Exception e) { e.printStackTrace(); }
     }
 
-    private void checkConnection() {
-        // TODO
-//        try { api.getClients(); }
-//        catch () {
-//
-//        }
+    private void fetchClients() {
+        try { clients = api.getClients(); }
+        catch (TS3QueryShutDownException e) {
+            System.err.println("TS3 Query has shut down, retrying...");
+            query.connect();
+        }
     }
 
     private void updClients() {
@@ -105,7 +107,7 @@ public class HClientsTS extends LStatusHandler {
 
     private void updTSStatus() {
         HashMap<Integer, ArrayList<Client>> channels = new HashMap<>();
-        for (Client client: api.getClients()) {
+        for (Client client: clients) {
             if (client.isServerQueryClient()) continue;
             final ArrayList<Client> list = channels.getOrDefault(client.getChannelId(), new ArrayList<>());
             list.add(client);
@@ -133,7 +135,7 @@ public class HClientsTS extends LStatusHandler {
         if (!loginSuccess) throw new IllegalStateException("Looks like login has failed!");
 
         int i = 0;
-        for (Client client: api.getClients()) if (!client.isServerQueryClient()) i++;
+        for (Client client: clients) if (!client.isServerQueryClient()) i++;
         return i;
     }
 
