@@ -38,4 +38,5 @@ public class Commons {
         return getID("role_checked");
     }
 
+    public static String getReportsChannelID() { return getID("channel_reports"); }
 }

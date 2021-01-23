@@ -18,7 +18,6 @@ import static ru.zont.dsbot.core.tools.Strings.STR;
 
 public class Help extends CommandAdapter {
 
-
     public Help(ZDSBot bot) throws RegisterException {
         super(bot);
     }
@@ -31,6 +30,11 @@ public class Help extends CommandAdapter {
     @Override
     public Properties getPropsDefaults() {
         return null;
+    }
+
+    @Override
+    public boolean checkPermission(MessageReceivedEvent event) {
+        return true;
     }
 
     @Override

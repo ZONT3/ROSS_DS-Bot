@@ -255,6 +255,7 @@ public class TV {
         return getChannelReference(reference);
     }
 
+    @SuppressWarnings("unchecked")
     public static ArrayList<String> retrieveYTWatchingList() {
         ArrayList<String> wl = (ArrayList<String>) Tools.retrieveObject(ytWatchlist);
         if (wl == null) return new ArrayList<>();

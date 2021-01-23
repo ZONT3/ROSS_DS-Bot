@@ -1,13 +1,23 @@
 package ru.rossteam.dsbot;
 
+import com.sun.net.httpserver.HttpServer;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import ru.rossteam.dsbot.command.*;
+import ru.rossteam.dsbot.http.FormsHandler;
+import ru.rossteam.dsbot.listeners.*;
 import ru.rossteam.dsbot.tools.Globals;
 import ru.zont.dsbot.core.ZDSBot;
+import ru.zont.dsbot.core.commands.CommandAdapter;
+import ru.zont.dsbot.core.handler.LStatusHandler;
 import ru.zont.dsbot.core.tools.Configs;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Properties;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static ru.rossteam.dsbot.tools.TV.setupTwitch;
 import static ru.rossteam.dsbot.tools.TV.setupYouTube;
@@ -35,9 +45,42 @@ public class Main extends ListenerAdapter {
         setupTwitch();
 
         ZDSBot bot = new ZDSBot(args[0], "1.1",
-                "ru.rossteam.dsbot.command", "ru.rossteam.dsbot.listeners");
+                "", "");
         bot.getJdaBuilder().enableIntents(GatewayIntent.GUILD_MESSAGE_REACTIONS);
+        registerAdapters(bot);
         bot.create().awaitReady();
+
+        setupServer(bot);
+    }
+
+    private static void setupServer(ZDSBot bot) throws IOException {
+        HttpServer server = HttpServer.create(new InetSocketAddress("0.0.0.0", 228), 0);
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(10);
+        server.createContext("/postForm", new FormsHandler(bot));
+        server.setExecutor(threadPoolExecutor);
+        server.start();
+    }
+
+    private static void registerAdapters(ZDSBot bot) {
+        // Нет, я не дегенерад, просто Reflections перестали работать какого-то хуя. Помогите мне.
+        bot.commandAdapters = new CommandAdapter[]{
+                new Streams(bot),
+                new Videos(bot),
+                new Config(bot),
+                new Help(bot),
+                new Ping(bot),
+                new Say(bot)
+        };
+        bot.statusHandlers = new LStatusHandler[0];
+        bot.getJdaBuilder().addEventListeners((Object[]) bot.statusHandlers);
+        bot.getJdaBuilder().addEventListeners(
+                new HYTVideos(bot),
+                new HClientsTS(bot),
+                new HEvents(bot),
+                new HNews(bot),
+                new HStreams(bot),
+                new HCheckpoint(bot)
+                );
     }
 
     private static void handleArguments(String[] args) throws LoginException, IllegalArgumentException {
