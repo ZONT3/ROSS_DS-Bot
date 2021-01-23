@@ -69,7 +69,8 @@ public class Main extends ListenerAdapter {
                 new Config(bot),
                 new Help(bot),
                 new Ping(bot),
-                new Say(bot)
+                new Say(bot),
+                new Clear(bot)
         };
         bot.statusHandlers = new LStatusHandler[0];
         bot.getJdaBuilder().addEventListeners((Object[]) bot.statusHandlers);
