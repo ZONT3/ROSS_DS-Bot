@@ -1,5 +1,4 @@
-rootProject.name = 'ROSS_DS-Bot'
+rootProject.name = 'ROSS-DS-Bot'
 include ":core"
 project(':core').projectDir = new File(settingsDir, '../DS-Bot-CORE')
-
 

@@ -2,8 +2,8 @@ plugins {
     id 'java'
 }
 
-group 'ru.rossteam'
-version '1.2'
+group 'ru.ross'
+version '2.0'
 
 repositories {
     mavenCentral()
@@ -11,29 +11,47 @@ repositories {
 }
 
 dependencies {
+    implementation 'org.jetbrains:annotations:20.1.0'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
-    compile project(':core')
     implementation 'net.dv8tion:JDA:4.2.0_209'
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'org.reflections:reflections:0.9.12'
-    implementation 'net.usrlib:material-color:0.1'
-    compile group: 'com.github.theholywaffle', name: 'teamspeak3-api', version: '1.2.0'
-    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.30'
+    // https://mvnrepository.com/artifact/commons-io/commons-io
+    compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.30'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-core
+    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    // https://mvnrepository.com/artifact/commons-cli/commons-cli
+    implementation group: 'commons-cli', name: 'commons-cli', version: '1.4'
+
+    compile project(':core')
+
     // https://mvnrepository.com/artifact/com.google.api-client/google-api-client
     compile group: 'com.google.api-client', name: 'google-api-client', version: '1.31.1'
     // https://mvnrepository.com/artifact/com.google.apis/google-api-services-youtube
     compile group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev222-1.25.0'
-    // https://mvnrepository.com/artifact/org.jsoup/jsoup
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
     compile group: 'com.github.twitch4j', name: 'twitch4j', version: '1.1.2'
-    // https://mvnrepository.com/artifact/commons-io/commons-io
-    compile group: 'commons-io', name: 'commons-io', version: '2.8.0'
-    // https://mvnrepository.com/artifact/org.json/json
-    compile group: 'org.json', name: 'json', version: '20201115'
-
+    // https://mvnrepository.com/artifact/org.jsoup/jsoup
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.13.1'
 }
 
 test {
     useJUnitPlatform()
+}
+
+task createProperties(dependsOn: processResources) {
+    doLast {
+        new File("$projectDir/src/main/resources/version.properties").withWriter { w ->
+            Properties p = new Properties()
+            p['version'] = project.version.toString()
+            p.store w, null
+        }
+    }
+}
+
+classes {
+    dependsOn createProperties
 }
