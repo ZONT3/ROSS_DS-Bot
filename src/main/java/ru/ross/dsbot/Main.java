@@ -6,6 +6,7 @@ import ru.ross.dsbot.commands.Media;
 import ru.ross.dsbot.http.ReportHandler;
 import ru.ross.dsbot.listeners.Greetings;
 import ru.ross.dsbot.loops.LMedia;
+import ru.ross.dsbot.loops.LTSClients;
 import ru.zont.dsbot2.ZDSBot;
 import ru.zont.dsbot2.ZDSBotBuilder;
 import ru.zont.dsbot2.commands.implement.Clear;
@@ -37,6 +38,8 @@ public class Main {
         public final Entry channel_streams = new Entry("0");
         public final Entry channel_video = new Entry("0");
         public final Entry channel_report = new Entry("0");
+        public final Entry channel_ts = new Entry("0");
+        public final Entry channel_ts_clients = new Entry("0");
 
         public Config() {
             super.prefix = new Entry("r.");
@@ -57,7 +60,7 @@ public class Main {
                         Clear.class, Say.class,
                         Media.class
                 )
-                .addLoops(LMedia.class)
+                .addLoops(LMedia.class, LTSClients.class)
                 .setTechAdmins(List.of("375638389195669504", "331524458806247426"))
                 .addListeners(new Greetings());
 
@@ -70,10 +73,16 @@ public class Main {
     }
 
     private static void handleArgs(String[] args) throws LoginException {
-        if (args.length < 3) throw new LoginException("Not enough args");
+        if (args.length < 4) throw new LoginException("Not enough args");
 
         Globals.TWITCH_API_SECRET = args[1];
         Globals.GOOGLE_API = args[2];
+
+        String[] split = args[3].split(";");
+        if (split.length != 3) throw new LoginException("TSQuery Connect string is invalid");
+        Globals.tsqHost  = split[0];
+        Globals.tsqLogin = split[1];
+        Globals.tsqPass  = split[2];
     }
 
     private static void setupServer(ZDSBot.GuildContext bot) throws IOException {
