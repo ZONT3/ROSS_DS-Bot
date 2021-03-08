@@ -16,6 +16,7 @@ import ru.zont.dsbot2.tools.Commons;
 import ru.zont.dsbot2.tools.ZDSBMessages;
 import ru.zont.dsbot2.tools.ZDSBStrings;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -53,9 +54,10 @@ public class Media extends CommandAdapter {
     }
 
     private void get(Input input) {
-        EmbedBuilder builder = new EmbedBuilder().setTitle(Strings.STR.getString("media.list.title"));
-        data.getData().stream().sorted().forEach(s -> builder.appendDescription(listEntry(s)));
-        input.getChannel().sendMessage(builder.build()).queue();
+        ArrayList<EmbedBuilder> builders = new ArrayList<>();
+        builders.add(new EmbedBuilder().setTitle(Strings.STR.getString("media.list.title")));
+        data.getData().stream().sorted().forEach(s -> ZDSBMessages.appendDescriptionSplit(listEntry(s), builders));
+        ZDSBMessages.sendSplit(input.getChannel(), builders);
     }
 
     private String listEntry(String s) {
