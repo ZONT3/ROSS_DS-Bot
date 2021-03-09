@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'ru.ross'
-version '2.0-pre2'
+version '2.1'
 
 repositories {
     mavenCentral()

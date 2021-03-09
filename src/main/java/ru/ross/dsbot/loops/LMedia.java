@@ -67,7 +67,7 @@ public class LMedia extends LoopAdapter {
                                 switch (bc) {
                                     case "live"     -> channelStr
                                             .sendMessage(ZDSBMessages.wrapEmbed(Msg.ytStream(video),
-                                                    "", String.format("<@&%s>", config.role_checked.get()))).queue();
+                                                    "", "@everyone")).queue();
                                     case "upcoming" -> channelStr.sendMessage(Msg.ytStreamPlan(video)).queue();
                                     default         -> channelVid.sendMessage(     Msg.ytVideo(video)).queue();
                                 }
