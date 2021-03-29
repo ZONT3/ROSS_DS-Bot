@@ -50,7 +50,7 @@ public class LMedia extends LoopAdapter {
                                 if (list.contains(stream.getId())) continue;
 
                                 channelStr.sendMessage(ZDSBMessages.wrapEmbed(Msg.ttvStream(stream),
-                                                "", String.format("<@&%s>", config.role_checked.get()))).queue();
+                                                "", "@everyone")).queue();
                                 list.add(stream.getId());
                             }
                         }

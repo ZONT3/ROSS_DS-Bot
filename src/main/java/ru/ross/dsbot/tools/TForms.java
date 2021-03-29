@@ -17,6 +17,7 @@ public class TForms {
         builders.add(new EmbedBuilder().setColor(0xf01010));
 
         for (Map.Entry<String, JsonElement> entry: form.entrySet()) {
+            if (entry.getKey().startsWith("%")) continue;
             if ("#Title".equalsIgnoreCase(entry.getKey())) {
                 builders.get(builders.size() - 1)
                         .setTitle(entry.getValue().getAsJsonObject().get("data").getAsString());
@@ -26,7 +27,12 @@ public class TForms {
         }
 
         Main.Config config = ConfigCaster.cast(context.getConfig());
-        ZDSBMessages.sendSplit(context.getTChannel(config.channel_report.get()), builders);
+        String defaultChannel = config.channel_report.get();
+
+        ZDSBMessages.sendSplit(context.getTChannel(form.has("%channel")
+            ? form.getAsJsonPrimitive("%channel").getAsString()
+            : defaultChannel
+        ), builders);
 //        Tools.tryFindTChannel(Commons.getReportsChannelID(), bot.jda).sendMessage(builder.build()).complete();
     }
 
