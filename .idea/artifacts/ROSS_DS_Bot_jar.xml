@@ -3,7 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ROSS_DS_Bot_jar</output-path>
     <root id="archive" name="ROSS-DS-Bot.jar">
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/../DS-Bot-CORE/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
       </element>
       <element id="module-output" name="ROSS-DS-Bot.core.main" />
       <element id="module-output" name="ROSS-DS-Bot.main" />
