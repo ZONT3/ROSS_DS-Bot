@@ -7,6 +7,8 @@ import ru.ross.dsbot.http.ReportHandler;
 import ru.ross.dsbot.listeners.Greetings;
 import ru.ross.dsbot.loops.LMedia;
 import ru.ross.dsbot.loops.LTSClients;
+import ru.ross.dsbot.loops.PEvents;
+import ru.ross.dsbot.loops.PNews;
 import ru.zont.dsbot2.ZDSBot;
 import ru.zont.dsbot2.ZDSBotBuilder;
 import ru.zont.dsbot2.commands.implement.Clear;
@@ -40,6 +42,8 @@ public class Main {
         public final Entry channel_report = new Entry("0");
         public final Entry channel_ts = new Entry("0");
         public final Entry channel_ts_clients = new Entry("0");
+        public final Entry channel_events = new Entry("723938067190382613", true);
+        public final Entry channel_news = new Entry("526032797908074498", true);
 
         public Config() {
             super.prefix = new Entry("r.");
@@ -61,6 +65,7 @@ public class Main {
                         Media.class
                 )
                 .addLoops(LMedia.class, LTSClients.class)
+                .addParsers(PEvents.class, PNews.class)
                 .setTechAdmins(List.of("375638389195669504", "331524458806247426"))
                 .addListeners(new Greetings());
 
