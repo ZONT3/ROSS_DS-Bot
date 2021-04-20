@@ -50,7 +50,7 @@ public class LMedia extends LoopAdapter {
                                 if (list.contains(stream.getId())) continue;
 
                                 channelStr.sendMessage(ZDSBMessages.wrapEmbed(Msg.ttvStream(stream),
-                                                "", "<&819137208375836683>")).queue();
+                                                "", "<@&819137208375836683>")).queue();
                                 list.add(stream.getId());
                             }
                         }
@@ -67,7 +67,7 @@ public class LMedia extends LoopAdapter {
                                 switch (bc) {
                                     case "live"     -> channelStr
                                             .sendMessage(ZDSBMessages.wrapEmbed(Msg.ytStream(video),
-                                                    "", "<&819137208375836683>")).queue();
+                                                    "", "<@&819137208375836683>")).queue();
                                     case "upcoming" -> channelStr.sendMessage(Msg.ytStreamPlan(video)).queue();
                                     default         -> channelVid.sendMessage(     Msg.ytVideo(video)).queue();
                                 }
