@@ -2,13 +2,11 @@ package ru.ross.dsbot;
 
 import com.sun.net.httpserver.HttpServer;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import ru.ross.dsbot.commands.DCS;
 import ru.ross.dsbot.commands.Media;
 import ru.ross.dsbot.http.ReportHandler;
 import ru.ross.dsbot.listeners.Greetings;
-import ru.ross.dsbot.loops.LMedia;
-import ru.ross.dsbot.loops.LTSClients;
-import ru.ross.dsbot.loops.PEvents;
-import ru.ross.dsbot.loops.PNews;
+import ru.ross.dsbot.loops.*;
 import ru.zont.dsbot2.ZDSBot;
 import ru.zont.dsbot2.ZDSBotBuilder;
 import ru.zont.dsbot2.commands.implement.Clear;
@@ -62,9 +60,9 @@ public class Main {
                 .setConfig(new Config())
                 .addCommands(Help.class,
                         Clear.class, Say.class,
-                        Media.class
+                        Media.class, DCS.class
                 )
-                .addLoops(LMedia.class, LTSClients.class)
+                .addLoops(LMedia.class, LTSClients.class, LDCSServers.class)
                 .addParsers(PEvents.class, PNews.class)
                 .setTechAdmins(List.of("375638389195669504", "331524458806247426"))
                 .addListeners(new Greetings());
@@ -78,7 +76,7 @@ public class Main {
     }
 
     private static void handleArgs(String[] args) throws LoginException {
-        if (args.length < 4) throw new LoginException("Not enough args");
+        if (args.length < 5) throw new LoginException("Not enough args");
 
         Globals.TWITCH_API_SECRET = args[1];
         Globals.GOOGLE_API = args[2];
@@ -88,6 +86,10 @@ public class Main {
         Globals.tsqHost  = split[0];
         Globals.tsqLogin = split[1];
         Globals.tsqPass  = split[2];
+
+        String[] splitDCS = args[4].split(";");
+        Globals.dcsLogin = splitDCS[0];
+        Globals.dcsPass = splitDCS[1];
     }
 
     private static void setupServer(ZDSBot.GuildContext bot) throws IOException {

@@ -9,4 +9,7 @@ public class Globals {
     public static String tsqHost;
     public static String tsqLogin;
     public static String tsqPass;
+
+    public static String dcsLogin;
+    public static String dcsPass;
 }
